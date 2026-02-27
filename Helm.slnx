@@ -1,5 +1,5 @@
 <Solution>
   <Project Path="Helm.Api/Helm.Api.csproj" />
   <Project Path="Helm.Core/Helm.Core.csproj" Id="9d33ff09-e67f-4905-a5bf-b349fa7522ab" />
-  <Project Path="Helm.Tests/Helm.Tests.csproj" Id="2c1e33d8-26f2-48fc-ac0a-947ef122b3c6" />
+  <Project Path="Helm.Tests/Helm.Tests.csproj" Id="7394d5a5-fb63-42a1-916b-ac6e8a122453" />
 </Solution>

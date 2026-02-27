@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Helm.Core.Domain.Users
+namespace Helm.Core.Domain.Enums
 {
     [Flags]
     public enum UserRole
