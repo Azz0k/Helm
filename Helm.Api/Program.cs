@@ -4,13 +4,17 @@ using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using System.Threading;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Helm.Api
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var settignsBuilder = new ConfigurationBuilder().AddJsonFile($"appsettings.json");
             IConfiguration config = settignsBuilder.Build();
@@ -21,48 +25,49 @@ namespace Helm.Api
                 Console.WriteLine(validator.error);
                 return;
             }
+            IConfigurationManager<OpenIdConnectConfiguration> configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>($"{appSettings?.ADFS?.ADFSDomain}.well-known/openid-configuration",
+                    new OpenIdConnectConfigurationRetriever());
+            OpenIdConnectConfiguration openIdConfig = await configurationManager.GetConfigurationAsync(CancellationToken.None);
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddSpaStaticFiles(conf =>
             {
                 conf.RootPath = "wwwroot";
             });
             builder.Services.AddControllers();
-            builder.Services.AddAuthentication(options =>
-            {
-                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-            }).
-            AddOpenIdConnect(options =>
-            {
-                options.ClientSecret = "O1gvoqODqZi8Nv_K__3Mfz36fZh_VmUlx6f4EBT0";
-                options.Authority = "https://fs.energo.local/adfs/.well-known/openid-configuration";
-                options.ClientId = "7aec8875-80fe-4998-94b8-d5f817b4bf5b";
-                options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.ResponseType = OpenIdConnectResponseType.Code;
-
-                options.SaveTokens = true;
-                options.GetClaimsFromUserInfoEndpoint = true;
-
-                options.MapInboundClaims = false;
-
-            });
-                
-            builder.Services.AddAuthorization();
             
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("FrontEnd", policy =>
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
                 {
-                    policy.WithOrigins("http://localhost:5173")
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials(); 
+                    options.Authority = $"{appSettings?.ADFS?.ADFSDomain}.well-known/openid-configuration";
+                    options.Audience = appSettings?.ADFS?.ADFSAudience;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuer = appSettings?.ADFS?.ADFSIssuer,
+                        IssuerSigningKeys = openIdConfig.SigningKeys
+                    };
                 });
-            });
-            builder.Services.AddControllers();
+            
+            builder.Services.AddAuthorization();
+            if (appSettings?.AllowedOrigins != null)
+            {
+                builder.Services.AddCors(options =>
+                {
+                    options.AddPolicy("FrontEnd", policy =>
+                    {
+                        policy.WithOrigins(appSettings?.AllowedOrigins)
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                    });
+                });
+            }
             var app = builder.Build();
             app.UseStaticFiles();
-            app.UseCors("FrontEnd");
+            if (appSettings?.AllowedOrigins != null)
+            {
+                app.UseCors("FrontEnd");
+            }
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();

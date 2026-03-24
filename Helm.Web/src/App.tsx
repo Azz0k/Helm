@@ -1,10 +1,11 @@
 import './App.css'
 import { useMsal } from "@azure/msal-react";
 import {useEffect, useState} from "react";
-import { InteractionRequiredAuthError, InteractionStatus} from "@azure/msal-browser";
+import { InteractionStatus} from "@azure/msal-browser";
 import {configure} from "mobx";
 import {observer} from "mobx-react";
 import {rootStore} from "./store/root-store.ts";
+import {Authenticate} from "./services/Authenticate.api.ts";
 
 configure({
   enforceActions: 'never',
@@ -22,17 +23,11 @@ export  const  App = observer(()=> {
       instance
         .acquireTokenSilent(accessTokenRequest)
         .then((accessTokenResponse) => {
-          /*
-          callApi(accessToken).then((response) => {
-            setApiData(response);
-          });*/
-          //console.log(accessTokenResponse);
-          rootStore.handleLogon(accessTokenResponse.account.username, accessTokenResponse.accessToken);
+          rootStore.handleLogon(accessTokenResponse.account.username, accessTokenResponse.accessToken, accessTokenResponse.idToken);
+          Authenticate().then(()=>console.log("success")).catch(()=>console.log("error"));
         })
         .catch((error) => {
-          if (error instanceof InteractionRequiredAuthError) {
-            instance.acquireTokenRedirect(accessTokenRequest).then();
-          }
+          instance.acquireTokenRedirect(accessTokenRequest).then();
           console.log(error);
           rootStore.handleLogout();
         });

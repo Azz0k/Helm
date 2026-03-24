@@ -10,15 +10,18 @@ class RootStore
   isLoggedIn:boolean = false;
   userName:string = "";
   accessToken:string = "";
-  handleLogon = (name: string, token:string) => {
+  idToken:string = "";
+  handleLogon = (name: string, accessToken:string, idToken:string) => {
     this.isLoggedIn = true;
     this.userName = name;
-    this.accessToken = token;
+    this.accessToken = accessToken;
+    this.idToken = idToken;
   }
   handleLogout = () =>{
     this.isLoggedIn = false;
     this.userName = "";
     this.accessToken = "";
+    this.idToken = "";
   }
 }
 

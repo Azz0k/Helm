@@ -12,16 +12,11 @@ namespace Helm.Api.Controllers
         public AuthenticationController() 
         { 
         }
-        [HttpGet]
-        public async Task<IResult> Get()
-        {
-            var userName = HttpContext.User.Identity?.Name;            
-            return Results.Ok(userName);
-        }
         [HttpPost]
         public async Task<IResult> Post()
         {
-            var userName = HttpContext.User.Identity?.Name;
+            string? userName = HttpContext.User.Claims.FirstOrDefault(c=>c.Type.Contains("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"))?.Value;
+            
             return Results.Ok(userName);
         }
     }
