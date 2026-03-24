@@ -1,6 +1,10 @@
 using Helm.Core.Infrastructure.Configuration;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Negotiate;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace Helm.Api
 {
@@ -23,12 +27,27 @@ namespace Helm.Api
                 conf.RootPath = "wwwroot";
             });
             builder.Services.AddControllers();
-            builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
-                .AddNegotiate();
-            builder.Services.AddAuthorization(options =>
+            builder.Services.AddAuthentication(options =>
             {
-                options.FallbackPolicy = options.DefaultPolicy;
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+            }).
+            AddOpenIdConnect(options =>
+            {
+                options.ClientSecret = "O1gvoqODqZi8Nv_K__3Mfz36fZh_VmUlx6f4EBT0";
+                options.Authority = "https://fs.energo.local/adfs/.well-known/openid-configuration";
+                options.ClientId = "7aec8875-80fe-4998-94b8-d5f817b4bf5b";
+                options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.ResponseType = OpenIdConnectResponseType.Code;
+
+                options.SaveTokens = true;
+                options.GetClaimsFromUserInfoEndpoint = true;
+
+                options.MapInboundClaims = false;
+
             });
+                
+            builder.Services.AddAuthorization();
             
             builder.Services.AddCors(options =>
             {
@@ -44,6 +63,7 @@ namespace Helm.Api
             var app = builder.Build();
             app.UseStaticFiles();
             app.UseCors("FrontEnd");
+            app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
