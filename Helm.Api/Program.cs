@@ -1,14 +1,22 @@
+using FluentValidation;
+using FluentValidation.Results;
+using Helm.Core.Application.Users.Queries;
 using Helm.Core.Infrastructure.Configuration;
+using Helm.Core.Infrastructure.Contexts;
+using Helm.Core.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using System.Threading;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using System.Reflection;
+using System.Threading;
 
 namespace Helm.Api
 {
@@ -19,22 +27,43 @@ namespace Helm.Api
             var settignsBuilder = new ConfigurationBuilder().AddJsonFile($"appsettings.json");
             IConfiguration config = settignsBuilder.Build();
             AppSettings? appSettings = config.GetSection("Settings").Get<AppSettings>();
-            var validator = new AppSettingsValidator(appSettings).Validate();
-            if (!validator.valid)
+            var validator = new AppSettingsValidator(appSettings);
+            if (!validator.IsValid)
             {
-                Console.WriteLine(validator.error);
+                foreach (var item in validator.Errors )
+                {
+                    Console.WriteLine(item.ErrorMessage);
+                }
                 return;
             }
             IConfigurationManager<OpenIdConnectConfiguration> configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>($"{appSettings?.ADFS?.ADFSDomain}.well-known/openid-configuration",
                     new OpenIdConnectConfigurationRetriever());
             OpenIdConnectConfiguration openIdConfig = await configurationManager.GetConfigurationAsync(CancellationToken.None);
             var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddAutoMapper(cfg =>
+            {
+                cfg.AddMaps(new []
+                {
+                    "Helm.API",
+                    "Helm.Core"
+                });
+
+                cfg.LicenseKey = appSettings?.MediatRLicense;
+            });
+            
+            builder.Services.AddMediatR(cfg =>
+            {
+                cfg.LicenseKey = appSettings?.MediatRLicense;
+                cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
+                cfg.RegisterServicesFromAssembly(typeof(GetUsersQueryHandler).Assembly);
+            });
             builder.Services.AddSpaStaticFiles(conf =>
             {
                 conf.RootPath = "wwwroot";
             });
             builder.Services.AddControllers();
-            
+            builder.Services.AddDbContext<PostgresDBContext>(options => options.UseNpgsql(appSettings?.ConnectionString));
+            builder.Services.AddScoped<PostgresUserRepository>();
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {

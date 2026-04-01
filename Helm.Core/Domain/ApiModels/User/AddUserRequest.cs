@@ -2,18 +2,15 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Helm.Core.Domain.Entities
+namespace Helm.Core.Domain.ApiModels.User
 {
-    public class User
+    public class AddUserRequest
     {
-        public int Id { get; set; }
         public required string Login { get; set; }
-        public string? Hash { get; set; }
+        public string? Password { get; set; }
         public required string Name { get; set; }
         public string? ADLogin { get; set; }
-        public int Version { get; set; }
         public bool Enabled { get; set; }
-        public bool Deleted { get; set; }
-        public List<UserRole> Roles { get; set; } = [];
+        public required List<string> Role { get; set; }
     }
 }
