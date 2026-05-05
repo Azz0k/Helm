@@ -1,23 +1,15 @@
-using FluentValidation;
-using FluentValidation.Results;
 using Helm.Core.Application.Users.Queries;
 using Helm.Core.Infrastructure.Configuration;
 using Helm.Core.Infrastructure.Contexts;
 using Helm.Core.Infrastructure.Repositories;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authentication.Negotiate;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
-using System.Reflection;
-using System.Threading;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("Helm.Tests")]
 namespace Helm.Api
 {
     public class Program

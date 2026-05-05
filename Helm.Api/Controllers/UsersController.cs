@@ -8,6 +8,7 @@ namespace Helm.Api.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private ISender sender;
