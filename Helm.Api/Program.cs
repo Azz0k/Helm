@@ -1,3 +1,4 @@
+using Helm.Core.Application.UserRoles.Queries;
 using Helm.Core.Application.Users.Queries;
 using Helm.Core.Infrastructure.Configuration;
 using Helm.Core.Infrastructure.Contexts;
@@ -7,7 +8,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
+using System.Reflection;
 using System.Runtime.CompilerServices;
+using FluentValidation;
+
 
 [assembly: InternalsVisibleTo("Helm.Tests")]
 namespace Helm.Api
@@ -42,7 +46,8 @@ namespace Helm.Api
 
                 cfg.LicenseKey = appSettings?.MediatRLicense;
             });
-            
+            builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+            builder.Services.AddValidatorsFromAssembly(typeof(GetUsersQueryHandler).Assembly);
             builder.Services.AddMediatR(cfg =>
             {
                 cfg.LicenseKey = appSettings?.MediatRLicense;
@@ -56,6 +61,7 @@ namespace Helm.Api
             builder.Services.AddControllers();
             builder.Services.AddDbContext<PostgresDBContext>(options => options.UseNpgsql(appSettings?.ConnectionString));
             builder.Services.AddScoped<PostgresUserRepository>();
+            builder.Services.AddScoped<PostgresUserRoleRepository>();
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
