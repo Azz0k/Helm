@@ -7,19 +7,19 @@ using System.Text;
 
 namespace Helm.Core.Application.UserRoles.Queries
 {
-    public record GetUserRolesQuery : IRequest<GetOperationResult<UserRolesVm>>;
-    public class GetUserRolesQueryHandler : IRequestHandler<GetUserRolesQuery, GetOperationResult<UserRolesVm>>
+    public record GetUserRolesQuery : IRequest<GetOperationResult<List<UserRoleDTO>>>;
+    public class GetUserRolesQueryHandler : IRequestHandler<GetUserRolesQuery, GetOperationResult<List<UserRoleDTO>>>
     {
         private PostgresUserRoleRepository postgresUserRoleRepository;
         public GetUserRolesQueryHandler(PostgresUserRoleRepository repository)
         {
             postgresUserRoleRepository = repository;
         }
-        public async Task<GetOperationResult<UserRolesVm>> Handle(GetUserRolesQuery request, CancellationToken cancellationToken)
+        public async Task<GetOperationResult<List<UserRoleDTO>>> Handle(GetUserRolesQuery request, CancellationToken cancellationToken)
         {
 
-            UserRolesVm vm = await postgresUserRoleRepository.GetAllUserRolesAsync(cancellationToken);
-            return new GetOperationResult<UserRolesVm>.Success(vm);
+            List<UserRoleDTO> vm = await postgresUserRoleRepository.GetAllUserRolesAsync(cancellationToken);
+            return new GetOperationResult<List<UserRoleDTO>>.Success(vm);
         }
     }
 

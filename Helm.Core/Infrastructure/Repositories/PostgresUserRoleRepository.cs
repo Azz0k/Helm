@@ -23,27 +23,20 @@ namespace Helm.Core.Infrastructure.Repositories
             this.mapper = mapper;
         }
 
-        public async Task<UserRolesVm> GetAllUserRolesAsync(CancellationToken cancellationToken)
+        public async Task<List<UserRoleDTO>> GetAllUserRolesAsync(CancellationToken cancellationToken)
         {
-            return new UserRolesVm()
-            {
-                UserRoles = await dBContext.UserRoles
+            return await dBContext.UserRoles
                 .AsNoTracking()
                 .ProjectTo<UserRoleDTO>(mapper.ConfigurationProvider)
-                .ToListAsync(cancellationToken)
-                
-            };
+                .ToListAsync(cancellationToken);
         }
-        public async Task<UserRolesVm> CreateRoleAsync(UserRole role, CancellationToken cancellationToken)
+        public async Task<UserRoleDTO> CreateRoleAsync(UserRole role, CancellationToken cancellationToken)
         {
             await dBContext.UserRoles.AddAsync(role);
             await dBContext.SaveChangesAsync(cancellationToken);
-            return new UserRolesVm()
-            {
-                UserRoles = [mapper.Map<UserRoleDTO>(role)]
-            };
+            return mapper.Map<UserRoleDTO>(role);
         }
-        public async Task<UserRolesVm?> UpdateRoleAsync(UserRole role, CancellationToken cancellationToken)
+        public async Task<UserRoleDTO?> UpdateRoleAsync(UserRole role, CancellationToken cancellationToken)
         {
             var currentRole = await dBContext.UserRoles.FindAsync(role.Id,cancellationToken);
             if (currentRole == null)
@@ -53,10 +46,7 @@ namespace Helm.Core.Infrastructure.Repositories
             currentRole.Description = role.Description;
             currentRole.Name = role.Name;
             await dBContext.SaveChangesAsync(cancellationToken);
-            return new UserRolesVm()
-            {
-                UserRoles = [mapper.Map<UserRoleDTO>(role)]
-            };
+            return mapper.Map<UserRoleDTO>(role);
         }
         public async Task<Boolean> FindByNameAsync(string name, CancellationToken cancellationToken)
         {

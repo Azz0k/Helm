@@ -24,44 +24,26 @@ namespace Helm.Api.Controllers
         public async Task<IActionResult> GetAllUserRoles()
         {
             var result = await sender.Send(new GetUserRolesQuery());
-            return result switch
-            {
-                GetOperationResult<UserRolesVm>.Success x => Ok(x.Data.UserRoles),
-                _ => BadRequest("")
-            };
+            return result.ToHttp(SuccessCodes.Ok);
         }
         [HttpPost]
         public async Task<IActionResult> CreateRole([FromBody] CreateUserRoleCommand command)
         {
             var result = await sender.Send(command);
-            return result switch
-            {
-                GetOperationResult<UserRolesVm>.Success x => Created("", x.Data.UserRoles.First()),
-                GetOperationResult<UserRolesVm>.Conflict => Conflict(),
-                _ => BadRequest("")
-            };
+            return result.ToHttp(SuccessCodes.Created);
         }
         [HttpPut]
         public async Task<IActionResult> UpdateRole([FromBody] UpdateUserRoleCommand command)
         {
             var result = await sender.Send(command);
-            return result switch
-            {
-                GetOperationResult<UserRolesVm>.Success x => Ok(x.Data.UserRoles.First()),
-                GetOperationResult<UserRolesVm>.NotFound => NotFound(),
-                _ => BadRequest("")
-            };
+            return result.ToHttp(SuccessCodes.Ok);
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRole(int id)
         {
             var result = await sender.Send(new DeleteUserRoleCommand() { Id = id});
-            return result switch
-            {
-                GetOperationResult<object>.Success x => NoContent(),
-                GetOperationResult<object>.NotFound => NotFound(),
-                _ => BadRequest("")
-            };
+            return result.ToHttp(SuccessCodes.NoContent);
         }
     }
+    
 }

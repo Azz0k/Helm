@@ -12,13 +12,13 @@ namespace Helm.Core.Application.UserRoles.Commands
 {
     public class UpdateUserRole
     {
-        public record UpdateUserRoleCommand : IRequest<GetOperationResult<UserRolesVm>>
+        public record UpdateUserRoleCommand : IRequest<GetOperationResult<UserRoleDTO>>
         {
             public required int Id { get; set; }
             public required string Name { get; set; }
             public string? Description { get; set; }
         }
-        public class UpdateUserRoleHandler : IRequestHandler<UpdateUserRoleCommand, GetOperationResult<UserRolesVm>>
+        public class UpdateUserRoleHandler : IRequestHandler<UpdateUserRoleCommand, GetOperationResult<UserRoleDTO>>
         {
             private PostgresUserRoleRepository postgresUserRoleRepository;
             private readonly IValidator<UpdateUserRoleCommand> validator;
@@ -27,12 +27,12 @@ namespace Helm.Core.Application.UserRoles.Commands
                 this.postgresUserRoleRepository = postgresUserRoleRepository;
                 this.validator = validator;
             }
-            public async Task<GetOperationResult<UserRolesVm>> Handle(UpdateUserRoleCommand command, CancellationToken cancellationToken)
+            public async Task<GetOperationResult<UserRoleDTO>> Handle(UpdateUserRoleCommand command, CancellationToken cancellationToken)
             {
                 var validationResult = validator.Validate(command);
                 if (!validationResult.IsValid)
                 {
-                    return new GetOperationResult<UserRolesVm>.Invalid();
+                    return new GetOperationResult<UserRoleDTO>.Invalid();
                 }
                 var entity = new UserRole
                 {
@@ -40,12 +40,12 @@ namespace Helm.Core.Application.UserRoles.Commands
                     Name = command.Name,
                     Description = command.Description,
                 };
-                UserRolesVm? vm = await postgresUserRoleRepository.UpdateRoleAsync(entity, cancellationToken);
+                UserRoleDTO? vm = await postgresUserRoleRepository.UpdateRoleAsync(entity, cancellationToken);
                 if (vm == null)
                 {
-                    return new GetOperationResult<UserRolesVm>.NotFound();
+                    return new GetOperationResult<UserRoleDTO>.NotFound();
                 }
-                return new GetOperationResult<UserRolesVm>.Success(vm);
+                return new GetOperationResult<UserRoleDTO>.Success(vm);
             }
         }
     }

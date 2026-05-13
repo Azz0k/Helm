@@ -7,11 +7,6 @@ using System.Text;
 
 namespace Helm.Core.Application.UserRoles.Queries
 {
-    public class UserRolesVm
-    {
-        public IReadOnlyCollection<UserRoleDTO> UserRoles { get; init; } = [];
-
-    }
     public class UserRoleDTO
     {
         public int Id { get; set; }
