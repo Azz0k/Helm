@@ -7,7 +7,7 @@ using System.Text;
 namespace Helm.Core.Application.Common
 {
     public enum SuccessCodes {Ok,Created,NoContent}
-        
+
     public abstract record GetOperationResult<T>
     {
         public sealed record Success(T Data) : GetOperationResult<T>;

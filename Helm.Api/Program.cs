@@ -1,3 +1,5 @@
+using FluentValidation;
+using Helm.Core.Application.Common.Behaviours;
 using Helm.Core.Application.UserRoles.Queries;
 using Helm.Core.Application.Users.Queries;
 using Helm.Core.Infrastructure.Configuration;
@@ -10,7 +12,6 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using FluentValidation;
 
 
 [assembly: InternalsVisibleTo("Helm.Tests")]
@@ -53,6 +54,7 @@ namespace Helm.Api
                 cfg.LicenseKey = appSettings?.MediatRLicense;
                 cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
                 cfg.RegisterServicesFromAssembly(typeof(GetUsersQueryHandler).Assembly);
+                cfg.AddOpenBehavior(typeof(ValidationBehaviour<,>));
             });
             builder.Services.AddSpaStaticFiles(conf =>
             {
@@ -90,6 +92,7 @@ namespace Helm.Api
                 });
             }
             var app = builder.Build();
+            app.UseMiddleware<ValidationExceptionHandlingMiddleware>();
             app.UseStaticFiles();
             if (appSettings?.AllowedOrigins != null)
             {

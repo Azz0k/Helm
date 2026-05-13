@@ -29,11 +29,6 @@ namespace Helm.Core.Application.UserRoles.Commands
             }
             public async Task<GetOperationResult<UserRoleDTO>> Handle(UpdateUserRoleCommand command, CancellationToken cancellationToken)
             {
-                var validationResult = validator.Validate(command);
-                if (!validationResult.IsValid)
-                {
-                    return new GetOperationResult<UserRoleDTO>.Invalid();
-                }
                 var entity = new UserRole
                 {
                     Id = command.Id,

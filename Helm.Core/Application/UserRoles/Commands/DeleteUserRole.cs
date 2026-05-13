@@ -26,11 +26,6 @@ namespace Helm.Core.Application.UserRoles.Commands
         }
         public async Task<GetOperationResult<object>> Handle(DeleteUserRoleCommand command, CancellationToken cancellationToken)
         {
-            var validationResult = validator.Validate(command);
-            if (!validationResult.IsValid)
-            {
-                return new GetOperationResult<object>.Invalid();
-            }
             if (await postgresUserRoleRepository.DeleteByIdAsync(command.Id, cancellationToken))
             {
                 return new GetOperationResult<object>.Success(new Object());

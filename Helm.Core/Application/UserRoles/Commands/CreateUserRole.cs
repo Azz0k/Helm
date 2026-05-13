@@ -26,11 +26,6 @@ namespace Helm.Core.Application.UserRoles.Commands
         }
         public async Task<GetOperationResult<UserRoleDTO>> Handle(CreateUserRoleCommand command, CancellationToken cancellationToken)
         {
-            var validationResult = validator.Validate(command);
-            if (!validationResult.IsValid)
-            {
-                return new GetOperationResult<UserRoleDTO>.Invalid();
-            }
             if (await postgresUserRoleRepository.FindByNameAsync(command.Name, cancellationToken))
             {
                 return new GetOperationResult<UserRoleDTO>.Conflict();
