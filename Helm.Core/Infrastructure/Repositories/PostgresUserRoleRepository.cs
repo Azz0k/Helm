@@ -8,6 +8,7 @@ using Helm.Core.Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Security;
 using System.Text;
 
 namespace Helm.Core.Infrastructure.Repositories
@@ -42,6 +43,21 @@ namespace Helm.Core.Infrastructure.Repositories
                 UserRoles = [mapper.Map<UserRoleDTO>(role)]
             };
         }
+        public async Task<UserRolesVm?> UpdateRoleAsync(UserRole role, CancellationToken cancellationToken)
+        {
+            var currentRole = await dBContext.UserRoles.FindAsync(role.Id,cancellationToken);
+            if (currentRole == null)
+            {
+                return null;
+            }
+            currentRole.Description = role.Description;
+            currentRole.Name = role.Name;
+            await dBContext.SaveChangesAsync(cancellationToken);
+            return new UserRolesVm()
+            {
+                UserRoles = [mapper.Map<UserRoleDTO>(role)]
+            };
+        }
         public async Task<Boolean> FindByNameAsync(string name, CancellationToken cancellationToken)
         {
             UserRole? existingRole = await dBContext.UserRoles.FirstOrDefaultAsync(role=>role.Name==name, cancellationToken);
@@ -49,6 +65,26 @@ namespace Helm.Core.Infrastructure.Repositories
             {
                 return false;
             }
+            return true;
+        }
+        public async Task<Boolean> FindByIdAsync(int Id, CancellationToken cancellationToken)
+        {
+            UserRole? existingRole = await dBContext.UserRoles.FindAsync(Id, cancellationToken);
+            if (existingRole == null)
+            {
+                return false;
+            }
+            return true;
+        }
+        public async Task<Boolean> DeleteByIdAsync(int Id, CancellationToken cancellationToken)
+        {
+            UserRole? existingRole = await dBContext.UserRoles.FindAsync(Id, cancellationToken);
+            if (existingRole == null)
+            {
+                return false;
+            }
+            dBContext.UserRoles.Remove(existingRole);
+            await dBContext.SaveChangesAsync(cancellationToken);
             return true;
         }
     }

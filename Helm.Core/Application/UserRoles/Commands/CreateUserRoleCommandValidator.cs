@@ -11,6 +11,7 @@ namespace Helm.Core.Application.UserRoles.Commands
         {
             RuleFor(v => v.Name)
                 .Must(str => str.Trim() != String.Empty);
+
         }
     }
 }

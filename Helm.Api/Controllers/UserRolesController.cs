@@ -6,6 +6,7 @@ using Helm.Core.Application.Users.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static Helm.Core.Application.UserRoles.Commands.UpdateUserRole;
 
 namespace Helm.Api.Controllers
 {
@@ -37,6 +38,28 @@ namespace Helm.Api.Controllers
             {
                 GetOperationResult<UserRolesVm>.Success x => Created("", x.Data.UserRoles.First()),
                 GetOperationResult<UserRolesVm>.Conflict => Conflict(),
+                _ => BadRequest("")
+            };
+        }
+        [HttpPut]
+        public async Task<IActionResult> UpdateRole([FromBody] UpdateUserRoleCommand command)
+        {
+            var result = await sender.Send(command);
+            return result switch
+            {
+                GetOperationResult<UserRolesVm>.Success x => Ok(x.Data.UserRoles.First()),
+                GetOperationResult<UserRolesVm>.NotFound => NotFound(),
+                _ => BadRequest("")
+            };
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteRole(int id)
+        {
+            var result = await sender.Send(new DeleteUserRoleCommand() { Id = id});
+            return result switch
+            {
+                GetOperationResult<object>.Success x => NoContent(),
+                GetOperationResult<object>.NotFound => NotFound(),
                 _ => BadRequest("")
             };
         }
