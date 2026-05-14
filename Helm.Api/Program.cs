@@ -1,5 +1,6 @@
 using FluentValidation;
 using Helm.Core.Application.Common.Behaviours;
+using Helm.Core.Application.Interfaces;
 using Helm.Core.Application.UserRoles.Queries;
 using Helm.Core.Application.Users.Queries;
 using Helm.Core.Infrastructure.Configuration;
@@ -62,8 +63,8 @@ namespace Helm.Api
             });
             builder.Services.AddControllers();
             builder.Services.AddDbContext<PostgresDBContext>(options => options.UseNpgsql(appSettings?.ConnectionString));
-            builder.Services.AddScoped<PostgresUserRepository>();
-            builder.Services.AddScoped<PostgresUserRoleRepository>();
+            builder.Services.AddScoped<IUserRepository,PostgresUserRepository>();
+            builder.Services.AddScoped<IUserRoleRepository,PostgresUserRoleRepository>();
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {

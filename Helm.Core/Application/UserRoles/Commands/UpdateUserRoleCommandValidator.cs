@@ -11,7 +11,7 @@ namespace Helm.Core.Application.UserRoles.Commands
         public UpdateUserRoleCommandValidator()
         {
             RuleFor(v => v.Name)
-                .Must(str => str.Trim() != String.Empty);
+                .Must(str => str==str.Trim());
             RuleFor(v => v.Id)
                 .Must(id => id > 0);
         }

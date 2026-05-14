@@ -1,6 +1,6 @@
 ﻿using Helm.Api;
 using Helm.Core.Application.Users.Queries;
-using Helm.Core.Domain.ApiModels.User;
+using Helm.Core.Domain.Entities;
 using Helm.Core.Infrastructure.Contexts;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -61,12 +61,53 @@ namespace Helm.Tests
             var content = await response.Content.ReadFromJsonAsync<List<UserDTO>>();
             return content;
         }
+        private async Task<HttpResponseMessage?> CreateAsync(string? login, string? name, List<int> roles)
+        {
+            CreateUserRequest request = new () { 
+                Login = login, 
+                Password= null, 
+                ADLogin = null,
+                Name = name, 
+                Roles = roles, 
+                Enabled = true};
+            var response = await _client.PostAsJsonAsync(apiUri, request);
+            return response;
+        }
         [Fact]
         public async Task UsersApi_GET_ShouldWorkCorrectly()
         {
             List<UserDTO>? getResponse = await GetAsync();
             Assert.NotNull(getResponse);
-            Assert.Empty(getResponse);
+            
+        }
+        [Fact]
+        public async Task UsersRolesApi_POST_ShouldWorkCorrectly()
+        {
+            string name = Guid.NewGuid().ToString();
+            string login = Guid.NewGuid().ToString();
+            List<int> roles = [];
+            var response = await CreateAsync(name, login, roles);
+            Assert.NotNull(response);
+            Assert.Equal(201, (int)response.StatusCode);
+            response = await CreateAsync(name, login, roles);
+            Assert.NotNull(response);
+            Assert.Equal(409, (int)response.StatusCode);
+            response = await CreateAsync("   ", "  ", roles);
+            Assert.NotNull(response);
+            Assert.Equal(400, (int)response.StatusCode);
+            response = await CreateAsync(null, login, roles);
+            Assert.NotNull(response);
+            Assert.Equal(400, (int)response.StatusCode);
+        }
+        public class CreateUserRequest
+        {
+            public string? Name { get; set; }
+            public string? Login { get; set; }
+            public string? Password { get; set; }
+            public string? ADLogin { get; set; }
+            public bool Enabled { get; set; }
+            public List<int> Roles { get; set; } = [];
+
         }
     }
 }

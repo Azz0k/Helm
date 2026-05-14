@@ -10,7 +10,7 @@ namespace Helm.Core.Application.UserRoles.Commands
         public CreateUserRoleCommandValidator()
         {
             RuleFor(v => v.Name)
-                .Must(str => str.Trim() != String.Empty);
+                .Must(str => str==str.Trim());
 
         }
     }

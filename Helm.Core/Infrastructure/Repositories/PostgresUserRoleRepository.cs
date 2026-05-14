@@ -30,7 +30,7 @@ namespace Helm.Core.Infrastructure.Repositories
                 .ProjectTo<UserRoleDTO>(mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
         }
-        public async Task<UserRoleDTO> CreateRoleAsync(UserRole role, CancellationToken cancellationToken)
+        public async Task<UserRoleDTO> AddRoleAsync(UserRole role, CancellationToken cancellationToken)
         {
             await dBContext.UserRoles.AddAsync(role);
             await dBContext.SaveChangesAsync(cancellationToken);
@@ -57,14 +57,9 @@ namespace Helm.Core.Infrastructure.Repositories
             }
             return true;
         }
-        public async Task<Boolean> FindByIdAsync(int Id, CancellationToken cancellationToken)
+        public async Task<UserRole?> FindByIdAsync(int Id, CancellationToken cancellationToken)
         {
-            UserRole? existingRole = await dBContext.UserRoles.FindAsync(Id, cancellationToken);
-            if (existingRole == null)
-            {
-                return false;
-            }
-            return true;
+            return await dBContext.UserRoles.FindAsync(Id, cancellationToken);
         }
         public async Task<Boolean> DeleteByIdAsync(int Id, CancellationToken cancellationToken)
         {

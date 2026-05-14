@@ -8,10 +8,6 @@ using System.Text;
 
 namespace Helm.Core.Application.Users.Queries
 {
-    public class UsersVm
-    {
-        public IReadOnlyCollection<UserDTO> Users { get; init; } = [];
-    }
 
     public class UserDTO
     {

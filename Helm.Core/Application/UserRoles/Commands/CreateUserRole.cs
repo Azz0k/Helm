@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Helm.Core.Application.Common;
+using Helm.Core.Application.Interfaces;
 using Helm.Core.Application.UserRoles.Queries;
 using Helm.Core.Domain.Entities;
 using Helm.Core.Infrastructure.Repositories;
@@ -17,16 +18,16 @@ namespace Helm.Core.Application.UserRoles.Commands
     }
     public class CreateUserRoleHandler : IRequestHandler<CreateUserRoleCommand, GetOperationResult<UserRoleDTO>>
     {
-        private PostgresUserRoleRepository postgresUserRoleRepository;
+        private IUserRoleRepository userRoleRepository;
         private readonly IValidator<CreateUserRoleCommand> validator;
-        public CreateUserRoleHandler(PostgresUserRoleRepository postgresUserRoleRepository, IValidator<CreateUserRoleCommand> validator)
+        public CreateUserRoleHandler(IUserRoleRepository userRoleRepository, IValidator<CreateUserRoleCommand> validator)
         {
-            this.postgresUserRoleRepository = postgresUserRoleRepository;
+            this.userRoleRepository = userRoleRepository;
             this.validator = validator;
         }
         public async Task<GetOperationResult<UserRoleDTO>> Handle(CreateUserRoleCommand command, CancellationToken cancellationToken)
         {
-            if (await postgresUserRoleRepository.FindByNameAsync(command.Name, cancellationToken))
+            if (await userRoleRepository.FindByNameAsync(command.Name, cancellationToken))
             {
                 return new GetOperationResult<UserRoleDTO>.Conflict();
             }
@@ -35,7 +36,7 @@ namespace Helm.Core.Application.UserRoles.Commands
                 Name = command.Name,
                 Description = command.Description,
             };
-            UserRoleDTO vm = await postgresUserRoleRepository.CreateRoleAsync(entity, cancellationToken);
+            UserRoleDTO vm = await userRoleRepository.AddRoleAsync(entity, cancellationToken);
             return new GetOperationResult<UserRoleDTO>.Success(vm);
         }
     }

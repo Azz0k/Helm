@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Helm.Core.Application.Common;
+using Helm.Core.Application.Interfaces;
 using Helm.Core.Application.UserRoles.Queries;
 using Helm.Core.Domain.Entities;
 using Helm.Core.Infrastructure.Repositories;
@@ -17,16 +18,16 @@ namespace Helm.Core.Application.UserRoles.Commands
     }
     public class DeleteUserRole : IRequestHandler<DeleteUserRoleCommand, GetOperationResult<object>>
     {
-        private PostgresUserRoleRepository postgresUserRoleRepository;
+        private IUserRoleRepository userRoleRepository;
         private readonly IValidator<DeleteUserRoleCommand> validator;
-        public DeleteUserRole(PostgresUserRoleRepository postgresUserRoleRepository, IValidator<DeleteUserRoleCommand> validator)
+        public DeleteUserRole(IUserRoleRepository userRoleRepository, IValidator<DeleteUserRoleCommand> validator)
         {
-            this.postgresUserRoleRepository = postgresUserRoleRepository;
+            this.userRoleRepository = userRoleRepository;
             this.validator = validator;
         }
         public async Task<GetOperationResult<object>> Handle(DeleteUserRoleCommand command, CancellationToken cancellationToken)
         {
-            if (await postgresUserRoleRepository.DeleteByIdAsync(command.Id, cancellationToken))
+            if (await userRoleRepository.DeleteByIdAsync(command.Id, cancellationToken))
             {
                 return new GetOperationResult<object>.Success(new Object());
             }

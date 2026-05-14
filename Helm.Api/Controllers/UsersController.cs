@@ -1,4 +1,6 @@
 ﻿
+using Helm.Core.Application.Common;
+using Helm.Core.Application.Users.Commands;
 using Helm.Core.Application.Users.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -17,11 +19,16 @@ namespace Helm.Api.Controllers
             this.sender = sender;
         }
         [HttpGet]
-        public async Task<IEnumerable<UserDTO>> GetAllUsers()
+        public async Task<IActionResult> GetAllUsers()
         {
             var result = await sender.Send(new GetUsersQuery());
-            return result.Users;
+            return result.ToHttp(SuccessCodes.Ok);
         }
-
+        [HttpPost]
+        public async Task<IActionResult> AddUser([FromBody] CreateUserCommand command)
+        {
+            var result = await sender.Send(command);
+            return result.ToHttp(SuccessCodes.Created);
+        }
     }
 }

@@ -1,13 +1,14 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Helm.Core.Application.Interfaces;
+using Helm.Core.Application.UserRoles.Queries;
 using Helm.Core.Application.Users.Queries;
-using Helm.Core.Domain.ApiModels.User;
 using Helm.Core.Domain.Entities;
 using Helm.Core.Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 
 namespace Helm.Core.Infrastructure.Repositories
@@ -21,9 +22,11 @@ namespace Helm.Core.Infrastructure.Repositories
             this.dBContext = dBContext;
             this.mapper = mapper;
         }
-        public Task AddUserAsync(AddUserRequest request)
+        public async Task<UserDTO> AddUserAsync(User user, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            await dBContext.Users.AddAsync(user);
+            await dBContext.SaveChangesAsync(cancellationToken);
+            return mapper.Map<UserDTO>(user);
         }
 
         public Task DeleteUserAsync(User user)
@@ -31,26 +34,30 @@ namespace Helm.Core.Infrastructure.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task<UsersVm> GetAllUsersAsync(CancellationToken cancellationToken)
+        public async Task<List<UserDTO>> GetAllUsersAsync(CancellationToken cancellationToken)
         {
-            return new UsersVm()
-            {
-                Users = await dBContext.Users
+            return await dBContext.Users
                 .AsNoTracking()
                 .Where(u => !u.Deleted)
                 .ProjectTo<UserDTO>(mapper.ConfigurationProvider)
-                .ToListAsync(cancellationToken)
-            };
+                .ToListAsync(cancellationToken);
         }
 
-        public Task<User> GetUserAysnc(int id)
+        public async Task<User?> FindUserByIdAysnc(int id, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            User? user = await dBContext.Users.FindAsync(id, cancellationToken);
+            return user;
         }
 
         public Task UpdateUserAsync(User user)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<User?> FindUserByLoginAsync(string login, CancellationToken cancellationToken)
+        {
+            User? user = await dBContext.Users.FirstOrDefaultAsync(user => user.Login == login, cancellationToken);
+            return user;
         }
     }
 }

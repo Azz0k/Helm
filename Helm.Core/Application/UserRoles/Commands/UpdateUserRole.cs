@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Helm.Core.Application.Common;
+using Helm.Core.Application.Interfaces;
 using Helm.Core.Application.UserRoles.Queries;
 using Helm.Core.Domain.Entities;
 using Helm.Core.Infrastructure.Repositories;
@@ -20,11 +21,11 @@ namespace Helm.Core.Application.UserRoles.Commands
         }
         public class UpdateUserRoleHandler : IRequestHandler<UpdateUserRoleCommand, GetOperationResult<UserRoleDTO>>
         {
-            private PostgresUserRoleRepository postgresUserRoleRepository;
+            private IUserRoleRepository userRoleRepository;
             private readonly IValidator<UpdateUserRoleCommand> validator;
-            public UpdateUserRoleHandler(PostgresUserRoleRepository postgresUserRoleRepository, IValidator<UpdateUserRoleCommand> validator)
+            public UpdateUserRoleHandler(IUserRoleRepository userRoleRepository, IValidator<UpdateUserRoleCommand> validator)
             {
-                this.postgresUserRoleRepository = postgresUserRoleRepository;
+                this.userRoleRepository = userRoleRepository;
                 this.validator = validator;
             }
             public async Task<GetOperationResult<UserRoleDTO>> Handle(UpdateUserRoleCommand command, CancellationToken cancellationToken)
@@ -35,7 +36,7 @@ namespace Helm.Core.Application.UserRoles.Commands
                     Name = command.Name,
                     Description = command.Description,
                 };
-                UserRoleDTO? vm = await postgresUserRoleRepository.UpdateRoleAsync(entity, cancellationToken);
+                UserRoleDTO? vm = await userRoleRepository.UpdateRoleAsync(entity, cancellationToken);
                 if (vm == null)
                 {
                     return new GetOperationResult<UserRoleDTO>.NotFound();
