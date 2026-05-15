@@ -16,13 +16,13 @@ namespace Helm.Core.Application.Users.Queries
         public required string Name { get; set; }
         public string? ADLogin { get; set; }
         public bool Enabled { get; set; }
-        public required List<string> Roles { get; set; }
+        public required List<int> Roles { get; set; }
         public class Mapping : Profile
         {
             public Mapping()
             {
                 CreateMap<User, UserDTO>()
-                    .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.Roles.Select(x => x.Name)));
+                    .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.Roles.Select(x => x.Id)));
             }
         }
     }

@@ -41,7 +41,7 @@ namespace Helm.Core.Application.Users.Commands
             {
                 return new GetOperationResult<UserDTO>.Conflict();
             }
-            User newUser = new() { Login =  command.Login, Name = command.Name, ADLogin = command.ADLogin, Enabled = command.Enabled, Deleted = false};
+            User newUser = new() { Login =  command.Login, Name = command.Name, ADLogin = command.ADLogin, Enabled = command.Enabled};
             if (command.Password != null)
             {
                 newUser.Hash = BCrypt.Net.BCrypt.HashPassword(command.Password);

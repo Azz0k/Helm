@@ -28,7 +28,7 @@ namespace Helm.Core.Application.Users.Commands
             RuleFor(v => v.ADLogin)
                 .NotEmpty()
                 .MaximumLength(UserConstants.ADLoginMaxLength)
-                .When(v => v.Password != null);
+                .When(v => v.ADLogin != null);
             RuleFor(v => v.Roles)
                 .NotNull()
                 .ForEach(role =>

@@ -33,15 +33,12 @@ namespace Helm.Tests
                         typeof(DbConnection));
 
                 services.Remove(dbConnectionDescriptor);
-                // Create open SqliteConnection so EF won't automatically close it.
                 services.AddSingleton<DbConnection>(container =>
                 {
                     var connection = new NpgsqlConnection(dbConn);
                     connection.Open();
                     return connection;
-
                 });
-
                 services.AddDbContext<PostgresDBContext>((container, options) =>
                 {
                     var connection = container.GetRequiredService<DbConnection>();

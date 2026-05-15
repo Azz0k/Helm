@@ -29,35 +29,57 @@ namespace Helm.Core.Infrastructure.Repositories
             return mapper.Map<UserDTO>(user);
         }
 
-        public Task DeleteUserAsync(User user)
+        public async Task<Boolean> DeleteUserAsync(int id, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            User? user = await dBContext.Users.FindAsync(id, cancellationToken);
+            if (user == null)
+            {
+                return false;
+            }
+            dBContext.Users.Remove(user);
+            await dBContext.SaveChangesAsync(cancellationToken);
+            return true;
         }
 
         public async Task<List<UserDTO>> GetAllUsersAsync(CancellationToken cancellationToken)
         {
             return await dBContext.Users
                 .AsNoTracking()
-                .Where(u => !u.Deleted)
                 .ProjectTo<UserDTO>(mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
         }
 
         public async Task<User?> FindUserByIdAysnc(int id, CancellationToken cancellationToken)
         {
-            User? user = await dBContext.Users.FindAsync(id, cancellationToken);
+            User? user = await dBContext.Users.Include(p => p.Roles).FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
             return user;
         }
 
-        public Task UpdateUserAsync(User user)
+        public async Task<UserDTO> UpdateUserAsync(User user, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            await dBContext.SaveChangesAsync(cancellationToken);
+            return mapper.Map<UserDTO>(user);
         }
 
         public async Task<User?> FindUserByLoginAsync(string login, CancellationToken cancellationToken)
         {
-            User? user = await dBContext.Users.FirstOrDefaultAsync(user => user.Login == login, cancellationToken);
+            User? user = await dBContext.Users.Include(p => p.Roles).FirstOrDefaultAsync(user => user.Login == login, cancellationToken);
             return user;
+        }
+        public async Task<UserDTO> AssignUserRoleAsync(User user, UserRole userRole, CancellationToken cancellationToken)
+        {
+            user.Roles.Add(userRole);
+            await dBContext.SaveChangesAsync(cancellationToken);
+            return mapper.Map<UserDTO>(user);
+        }
+        public async Task<UserDTO?> RemoveUserRoleAsync(User user, UserRole userRole, CancellationToken cancellationToken)
+        {
+            if (!user.Roles.Remove(userRole))
+            {
+                return null;
+            }
+            await dBContext.SaveChangesAsync(cancellationToken);
+            return mapper.Map<UserDTO>(user);
         }
     }
 }

@@ -13,7 +13,10 @@ namespace Helm.Core.Domain.Entities
         public string? ADLogin { get; set; }
         public int Version { get; set; }
         public bool Enabled { get; set; }
-        public bool Deleted { get; set; }
         public List<UserRole> Roles { get; set; } = [];
+        public bool HasRole(int roleId)
+        {
+            return Roles.Any(x => x.Id == roleId);
+        }
     }
 }

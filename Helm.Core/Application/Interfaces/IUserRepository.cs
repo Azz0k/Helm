@@ -9,7 +9,9 @@ namespace Helm.Core.Application.Interfaces
         Task<User?> FindUserByIdAysnc(int id, CancellationToken cancellationToken);
         Task<User?> FindUserByLoginAsync(string login,CancellationToken cancellationToken);
         Task<List<UserDTO>> GetAllUsersAsync(CancellationToken cancellationToken);
-        Task UpdateUserAsync(User user);
-        Task DeleteUserAsync(User user);
+        Task<UserDTO> UpdateUserAsync(User user, CancellationToken cancellationToken);
+        Task<Boolean> DeleteUserAsync(int id, CancellationToken cancellationToken);
+        Task<UserDTO> AssignUserRoleAsync(User user, UserRole userRole, CancellationToken cancellationToken);
+        Task<UserDTO?> RemoveUserRoleAsync(User user, UserRole userRole, CancellationToken cancellationToken);
     }
 }

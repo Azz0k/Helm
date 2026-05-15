@@ -26,7 +26,6 @@ namespace Helm.Core.Infrastructure.Contexts
                 entity.Property(entity => entity.Name).IsRequired();
                 entity.Property(entity => entity.Version).IsRequired().HasDefaultValue(Int32.MinValue);
                 entity.Property(entity => entity.Enabled).IsRequired().HasDefaultValue(true);
-                entity.Property(entity => entity.Deleted).IsRequired().HasDefaultValue(false);
                 entity.HasMany(entity => entity.Roles).WithMany(r => r.Users);
             });
             modelBuilder.Entity<UserRole>(entity =>
