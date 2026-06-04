@@ -23,8 +23,10 @@ namespace Helm.Core.Application.Users.Commands
                 .MaximumLength(UserConstants.NameMaxLength)
                 .Must(str => str == str.Trim());
             RuleFor(v => v.ADLogin)
-               .MaximumLength(UserConstants.ADLoginMaxLength)
-               .When(v => v.ADLogin != null);
+                .NotEmpty()
+                .Must(str => str == str.Trim())
+                .MaximumLength(UserConstants.ADLoginMaxLength)
+                .When(v => v.ADLogin != null);
 
         }
     }

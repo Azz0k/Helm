@@ -177,7 +177,7 @@ namespace Helm.Tests
             await UpdateUserInvalidPath(originalId, "   ", newLogin);
             await UpdateUserInvalidPath(null, newName, newLogin);
             await UpdateUserInvalidPath(-1, newName, newLogin);
-            var response = await UpdateAsync(Int32.MaxValue, newName, newLogin, "");
+            var response = await UpdateAsync(Int32.MaxValue, newName, newLogin, newADLogin);
             Assert.NotNull(response);
             Assert.Equal(404, (int)response.StatusCode);
         }
