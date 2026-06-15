@@ -6,6 +6,8 @@ import {configure} from "mobx";
 import {observer} from "mobx-react";
 import {rootStore} from "./store/root-store.ts";
 import {Authenticate} from "./services/Authenticate.api.ts";
+import {ThemeProvider} from "./components/theme-provider.tsx";
+import {DefaultPage} from "@/pages/DefaultPage.tsx";
 
 configure({
   enforceActions: 'never',
@@ -35,12 +37,17 @@ export  const  App = observer(()=> {
   }, [instance, accounts, inProgress, apiData]);
    return(
     <>
-      {rootStore.isLoggedIn && (
-        <div className="button-div">
-          {rootStore.userName}
-        </div>
-      )
-      }
+      <ThemeProvider theme={rootStore.theme}>
+        <section className="h-screen w-screen">
+          {rootStore.isLoggedIn && (
+            <DefaultPage />
+            /*<div className="button-div">
+              {rootStore.userName}
+            </div>*/
+            )
+          }
+        </section>
+      </ThemeProvider>
     </>
   );
 });
