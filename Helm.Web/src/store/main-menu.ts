@@ -3,11 +3,19 @@ import {House, UserCog } from "lucide-react";
 export const mainMenu = {
   navAdmin: [
     {
-      title: "Главная",
+      title: "",
       url: "/",
       icon: House,
       isActive: true,
       items:[
+        {
+          title: "Документация",
+          url: "/documents",
+        },
+        {
+          title: "Часто задаваемые вопросы",
+          url: "/faq",
+        },
         {
           title: "Снять пароль docx, xlsx",
           url: "/removepassword",
@@ -15,9 +23,20 @@ export const mainMenu = {
       ]
     },
     {
-      title: "Пользователи",
-      url: "/users",
+      title: "Администрирование",
       icon: UserCog,
+      url: "#",
+      isActive: true,
+      items: [
+        {
+          title: "Пользователи",
+          url: "/users",
+        },
+        {
+          title: "Роли",
+          url: "/userroles",
+        }
+      ]
     }
   ],
 }

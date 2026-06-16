@@ -1,8 +1,8 @@
 import {makeAutoObservable} from "mobx";
 import {router} from "@/routes/router.tsx";
 import {mainMenu} from "@/store/main-menu.ts";
-
-//const themeKey = "vite-ui-theme";
+import ThemeStore from "@/store/theme-store.ts";
+import SearchStore from "@/store/search-store.tsx";
 
 class RootStore
 {
@@ -13,9 +13,9 @@ class RootStore
       this.pathName = evt.toLocation.pathname;
     });
   }
-  searchValue: string = "";
+  themeStore = new ThemeStore();
+  searchStore = new SearchStore();
   pathName!: string;
-  themeSwitchValue = true;
   isLoggedIn:boolean = false;
   userName:string = "";
   accessToken:string = "";
@@ -26,9 +26,7 @@ class RootStore
   get mainMenu() {
     return mainMenu.navAdmin;
   }
-  get theme() {
-    return this.themeSwitchValue? "dark" : "light";
-  }
+
   handleLogon = (name: string, accessToken:string, idToken:string) => {
     this.isLoggedIn = true;
     this.userName = name;

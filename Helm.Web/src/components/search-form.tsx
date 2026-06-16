@@ -17,8 +17,9 @@ export const SearchForm = observer(({ ...props }: React.ComponentProps<"form">)=
           id="search"
           placeholder="Введи для поиска..."
           className="h-8 pl-7"
-          value={rootStore.searchValue}
-          /*onChange={rootStore.handleChangeSearchValue}*/
+          value={rootStore.searchStore.searchValue}
+          onChange={rootStore.searchStore.handleChangeSearchValue}
+          disabled={rootStore.searchStore.disabled}
         />
         <Search className="pointer-events-none absolute top-1/2 left-2 size-4 -translate-y-1/2 opacity-50 select-none" />
       </div>

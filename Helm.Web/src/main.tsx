@@ -4,6 +4,7 @@ import App from './App.tsx'
 import { PublicClientApplication } from '@azure/msal-browser';
 import { MsalProvider } from '@azure/msal-react';
 import {StrictMode} from "react";
+import {QueryClient} from "@tanstack/react-query";
 
 export const msalConfig = {
   auth: {
@@ -19,7 +20,7 @@ export const msalConfig = {
     storeAuthStateInCookie: false,
   },
 };
-
+export const queryClient = new QueryClient();
 const msalInstance = new PublicClientApplication(msalConfig);
 
 createRoot(document.getElementById('root')!).render(

@@ -53,11 +53,11 @@ export function DataTable<TData, TValue>({
     });
   useEffect(() => {
     return   reaction(
-      ()=>rootStore.searchValue,
+      ()=>rootStore.searchStore.searchValue,
       ()=>{
         if (rootStore.isLoggedIn){
           console.log(table.getGlobalFilterFn());
-          table.setGlobalFilter(rootStore.searchValue);
+          table.setGlobalFilter(rootStore.searchStore.searchValue);
         }
       }
     );

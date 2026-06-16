@@ -1,18 +1,18 @@
-import {userColumns} from "@/content/users/user-columns.tsx";
+import {userRoleColumns} from "@/content/user-roles/user-roles-columns.tsx";
 import {DataTable} from "@/components/data-table.tsx";
 import {observer} from "mobx-react";
-import {userStore} from "@/content/users/user-store.ts";
+import {userRoleStore} from "@/content/user-roles/user-role-store.ts";
 import {rootStore} from "@/store/root-store.ts";
 import {useEffect} from "react";
 import {reaction} from "mobx";
 
-export const UsersContent = observer(() => {
+export const UserRolesContent = observer(() => {
   useEffect(()=>{
     return   reaction(
       ()=>rootStore.isLoggedIn,
       ()=>{
         if (rootStore.isLoggedIn){
-          userStore.LoadAllUsers().then();
+          userRoleStore.LoadAllUserRoles().then();
         }
       },
       { fireImmediately: true }
@@ -20,7 +20,7 @@ export const UsersContent = observer(() => {
   },[]);
   return (
     <section className="container mx-auto py-10">
-      <DataTable columns={userColumns} data={userStore.usersData}/>
+      <DataTable columns={userRoleColumns} data={userRoleStore.userRolesData}/>
     </section>
   );
 });

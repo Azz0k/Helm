@@ -37,7 +37,7 @@ export  const  App = observer(()=> {
   }, [instance, accounts, inProgress, apiData]);
    return(
     <>
-      <ThemeProvider theme={rootStore.theme}>
+      <ThemeProvider theme={rootStore.themeStore.theme}>
         <section className="h-screen w-screen">
           {rootStore.isLoggedIn && (
             <DefaultPage />
