@@ -11,6 +11,7 @@ using System.Text;
 
 namespace Helm.Core.Application.UserRoles.Commands
 {
+    [RequireRole("UserRoleManager")]
     public record CreateUserRoleCommand: IRequest<GetOperationResult<UserRoleDTO>>
     {
         public required string Name { get; set; }

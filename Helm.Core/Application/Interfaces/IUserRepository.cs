@@ -12,6 +12,7 @@ namespace Helm.Core.Application.Interfaces
         Task<UserDTO> UpdateUserAsync(User user, CancellationToken cancellationToken);
         Task<Boolean> DeleteUserAsync(int id, CancellationToken cancellationToken);
         Task<UserDTO> AssignUserRoleAsync(User user, UserRole userRole, CancellationToken cancellationToken);
+        Task<UserDTO> ReplaceUserRoleAsync(User user, List<int> roles, CancellationToken cancellationToken);
         Task<UserDTO?> RemoveUserRoleAsync(User user, UserRole userRole, CancellationToken cancellationToken);
     }
 }

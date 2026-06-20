@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Helm.Api
 {
-    public sealed class ValidationExceptionHandlingMiddleware
+    public sealed class ExceptionHandlingMiddleware
     {
         private readonly RequestDelegate _next;
 
-        public ValidationExceptionHandlingMiddleware(RequestDelegate next)
+        public ExceptionHandlingMiddleware(RequestDelegate next)
         {
             _next = next;
         }
@@ -17,6 +17,18 @@ namespace Helm.Api
             try
             {
                 await _next(context);
+            }
+            catch (ForbiddenException exception)
+            {
+                var problemDetails = new ProblemDetails
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    Type = "AuthorizationFailure",
+                    Title = "Forbidden",
+                    Detail = "You are not allowed to access"
+                };
+                context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                await context.Response.WriteAsJsonAsync(problemDetails);
             }
             catch (ValidationException exception)
             {

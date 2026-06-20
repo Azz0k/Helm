@@ -8,6 +8,7 @@ using System.Text;
 
 namespace Helm.Core.Application.Users.Queries
 {
+    [RequireRole("UserManager")]
     public record GetUsersQuery : IRequest<GetOperationResult<List<UserDTO>>>;
     public class GetUsersQueryHandler : IRequestHandler<GetUsersQuery, GetOperationResult<List<UserDTO>>>
     {

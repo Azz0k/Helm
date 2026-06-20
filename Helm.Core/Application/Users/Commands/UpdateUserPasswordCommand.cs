@@ -11,6 +11,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Helm.Core.Application.Users.Commands
 {
+    [RequireRole("UserManager")]
     public record UpdateUserPasswordCommand : IRequest<GetOperationResult<UserDTO>>
     {
         public int Id { get; set; }

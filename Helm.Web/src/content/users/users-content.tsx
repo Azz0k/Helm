@@ -5,6 +5,7 @@ import {userStore} from "@/content/users/user-store.ts";
 import {rootStore} from "@/store/root-store.ts";
 import {useEffect} from "react";
 import {reaction} from "mobx";
+import {Forbidden} from "@/pages/Forbidden.tsx";
 
 export const UsersContent = observer(() => {
   useEffect(()=>{
@@ -12,7 +13,7 @@ export const UsersContent = observer(() => {
       ()=>rootStore.isLoggedIn,
       ()=>{
         if (rootStore.isLoggedIn){
-          userStore.LoadAllUsers().then();
+          userStore.handleFetchUsers().then();
         }
       },
       { fireImmediately: true }
@@ -20,7 +21,10 @@ export const UsersContent = observer(() => {
   },[]);
   return (
     <section className="container mx-auto py-10">
-      <DataTable columns={userColumns} data={userStore.usersData}/>
+      {
+        userStore.forbidden ? ( <Forbidden />) :
+          (<DataTable columns={userColumns} data={userStore.usersData}/>)
+      }
     </section>
   );
 });

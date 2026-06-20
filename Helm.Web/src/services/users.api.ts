@@ -3,23 +3,41 @@ import {AddData, DeleteData, FetchData, UpdateData} from "./DataService.api.ts";
 
 const usersApiUrl = import.meta.env.VITE_USERS_API_URL;
 
-export const addUser = async (body:string)=>{
+export const addUser = async (body?:string)=>{
   const res = await AddData(usersApiUrl, body);
-  if (res.status !== 200) {
+  if (res.status !== 201) {
     throw res.status;
   }
-  return res.text();
+  return res.json();
 }
-export const updateUser = async (body:string)=>{
+export const updateUser = async (body?:string)=>{
   const res = await UpdateData(usersApiUrl, body);
   if (res.status !== 200) {
     throw res.status;
   }
+  return res.json();
 };
-export const deleteUser = async (id:number)=>{
+export const deleteUser = async (id?:number)=>{
   const res = await DeleteData(`${usersApiUrl}/${id}`);
-  return res.status;
+  if (res.status !== 204) {
+    throw res.status;
+  }
 }
+export const updateUserStatus = async (id?:number, body?:string)=>{
+  const res = await UpdateData(`${usersApiUrl}/${id}/status`, body);
+  if (res.status !== 200) {
+    throw res.status;
+  }
+  return res.json();
+}
+export const replaceRoleToUser = async (body?:string)=>{
+  const res = await UpdateData(`${usersApiUrl}/role`, body);
+  if (res.status !== 200) {
+    throw res.status;
+  }
+  return res.json();
+}
+
 export const loadAllUsers = async () => {
   return await queryClient.fetchQuery({
     queryKey: ["users", "get"],

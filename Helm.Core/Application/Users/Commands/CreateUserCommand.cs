@@ -13,6 +13,7 @@ using System.Text;
 
 namespace Helm.Core.Application.Users.Commands
 {
+    [RequireRole("UserManager")]
     public record CreateUserCommand : IRequest<GetOperationResult<UserDTO>>
     {
         public required string Login { get; set; }

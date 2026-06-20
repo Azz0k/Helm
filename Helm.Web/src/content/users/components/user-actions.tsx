@@ -10,8 +10,8 @@ import React from "react";
 import {userStore} from "@/content/users/user-store.ts";
 import {ActionConfirmationDialog} from "@/components/action-confirmation-dialog.tsx";
 import type {User} from "@/content/users/user-columns.tsx";
-import {ChangePasswordDialog} from "@/content/users/components/change-password-dialog.tsx";
 import {EditUserDialog} from "@/content/users/components/edit-user-dialog.tsx";
+import {ToggleUserRolesDialog} from "@/content/users/components/toggle-user-roles-dialog.tsx";
 
 type UserActionsProps = {
   user:User;
@@ -49,9 +49,30 @@ export const UserActions = observer(({user}:UserActionsProps)=>{
           menuItemText="Редактировать пользователя"
           loading={userStore.loading}
           description="Введите новые данные пользователя"
-          title={`Редактируем ${user.Login}`}
+          title={`Редактируем ${user.login}`}
         >
           <EditUserDialog user={user}/>
+        </ActionConfirmationDialog>
+        <ActionConfirmationDialog
+          onCancel={cancelAction}
+          onConfirm={()=>userStore.handleChangeUserStatus(user.id)}
+          error={userStore.error}
+          menuItemText={`${userStore.changeUserStatusText(user.id)} пользователя`}
+          loading={userStore.loading}
+          description=""
+          title="Вы уверены?"
+        >
+        </ActionConfirmationDialog>
+        <ActionConfirmationDialog
+          onCancel={cancelAction}
+          onConfirm={()=>userStore.handleUpdateUserStatus(user.id)}
+          error={userStore.error}
+          menuItemText="Назначить роли пользователю"
+          loading={userStore.loading}
+          description="Выберите роли пользователя"
+          title={`Редактируем ${user.login}`}
+        >
+          <ToggleUserRolesDialog user={user}/>
         </ActionConfirmationDialog>
         <ActionConfirmationDialog
           onCancel={cancelAction}
@@ -63,18 +84,6 @@ export const UserActions = observer(({user}:UserActionsProps)=>{
           title="Вы уверены?"
         >
         </ActionConfirmationDialog>
-        <ActionConfirmationDialog
-          onCancel={cancelAction}
-          onConfirm={()=>userStore.handlePasswordChange(user)}
-          error={userStore.error}
-          menuItemText="Сменить пароль пользователю"
-          loading={userStore.loading}
-          description="Введите новый пароль и подтверждение пароля"
-          title={`Смена пароля для ${user.Login}`}
-        >
-          <ChangePasswordDialog/>
-        </ActionConfirmationDialog>
-
       </DropdownMenuContent>
     </DropdownMenu>
   )

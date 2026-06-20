@@ -11,6 +11,7 @@ using System.Text;
 
 namespace Helm.Core.Application.Users.Commands
 {
+    [RequireRole("UserManager")]
     public record RemoveUserRoleCommand : IRequest<GetOperationResult<UserDTO>>
     {
         public int UserId { get; set; }

@@ -10,6 +10,7 @@ using System.Text;
 
 namespace Helm.Core.Application.Users.Commands
 {
+    [RequireRole("UserManager")]
     public record AssignUserRoleCommand : IRequest<GetOperationResult<UserDTO>>
     {
         public int UserId { get; set; }

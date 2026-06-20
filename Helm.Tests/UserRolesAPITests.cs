@@ -16,14 +16,15 @@ using System.Text;
 using Xunit;
 namespace Helm.Tests
 {
-    public class UserRolesAPITests : IClassFixture<CustomWebApplicationFactory<Program>>
+    public class UserRolesAPITests : IClassFixture<NoAuthWebApplicationFactory<Program>>
     {
         private readonly ITestOutputHelper _testOutputHelper;
         private readonly HttpClient _client;
-        private readonly CustomWebApplicationFactory<Program> _factory;
+        private readonly NoAuthWebApplicationFactory<Program> _factory;
         private string apiUri = "/api/v1/UserRoles";
+        private string testUserName = "Test user";
         public UserRolesAPITests(
-    CustomWebApplicationFactory<Program> factory, ITestOutputHelper testOutputHelper)
+    NoAuthWebApplicationFactory<Program> factory, ITestOutputHelper testOutputHelper)
         {
             _testOutputHelper = testOutputHelper;
             _factory = factory;

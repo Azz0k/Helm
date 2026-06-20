@@ -1,11 +1,10 @@
 import './App.css'
 import { useMsal } from "@azure/msal-react";
 import {useEffect, useState} from "react";
-import { InteractionStatus} from "@azure/msal-browser";
+import {InteractionStatus} from "@azure/msal-browser";
 import {configure} from "mobx";
 import {observer} from "mobx-react";
 import {rootStore} from "./store/root-store.ts";
-import {Authenticate} from "./services/Authenticate.api.ts";
 import {ThemeProvider} from "./components/theme-provider.tsx";
 import {DefaultPage} from "@/pages/DefaultPage.tsx";
 
@@ -25,8 +24,7 @@ export  const  App = observer(()=> {
       instance
         .acquireTokenSilent(accessTokenRequest)
         .then((accessTokenResponse) => {
-          rootStore.handleLogon(accessTokenResponse.account.username, accessTokenResponse.accessToken, accessTokenResponse.idToken);
-          Authenticate().then(()=>console.log("success")).catch(()=>console.log("error"));
+          rootStore.handleLogon(accessTokenResponse.account.username, accessTokenResponse.accessToken, accessTokenResponse.idToken).then();
         })
         .catch((error) => {
           instance.acquireTokenRedirect(accessTokenRequest).then();
@@ -41,9 +39,6 @@ export  const  App = observer(()=> {
         <section className="h-screen w-screen">
           {rootStore.isLoggedIn && (
             <DefaultPage />
-            /*<div className="button-div">
-              {rootStore.userName}
-            </div>*/
             )
           }
         </section>

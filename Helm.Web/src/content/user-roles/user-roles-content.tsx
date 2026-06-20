@@ -5,6 +5,7 @@ import {userRoleStore} from "@/content/user-roles/user-role-store.ts";
 import {rootStore} from "@/store/root-store.ts";
 import {useEffect} from "react";
 import {reaction} from "mobx";
+import {Forbidden} from "@/pages/Forbidden.tsx";
 
 export const UserRolesContent = observer(() => {
   useEffect(()=>{
@@ -12,7 +13,9 @@ export const UserRolesContent = observer(() => {
       ()=>rootStore.isLoggedIn,
       ()=>{
         if (rootStore.isLoggedIn){
-          userRoleStore.LoadAllUserRoles().then();
+          userRoleStore.handleFetchUserRoles().then(()=>{
+            rootStore.searchStore.enableSearch();
+          });
         }
       },
       { fireImmediately: true }
@@ -20,7 +23,13 @@ export const UserRolesContent = observer(() => {
   },[]);
   return (
     <section className="container mx-auto py-10">
-      <DataTable columns={userRoleColumns} data={userRoleStore.userRolesData}/>
+      {
+        userRoleStore.forbidden ? (
+          <Forbidden />
+        ) : (
+          <DataTable columns={userRoleColumns} data={userRoleStore.userRolesData}/>
+        )
+      }
     </section>
   );
 });

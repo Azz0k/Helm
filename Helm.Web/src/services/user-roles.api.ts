@@ -5,7 +5,7 @@ const userRolesApiUrl = import.meta.env.VITE_USER_ROLES_API_URL;
 
 export const addUserRole = async (body:string)=>{
   const res = await AddData(userRolesApiUrl, body);
-  if (res.status !== 204) {
+  if (res.status !== 201) {
     throw res.status;
   }
   return res.json();
@@ -17,9 +17,11 @@ export const updateUserRole = async (body:string)=>{
   }
   return res.json();
 };
-export const deleteUserRole = async (id:number)=>{
+export const deleteUserRole = async (id:string)=>{
   const res = await DeleteData(`${userRolesApiUrl}/${id}`);
-  return res.status;
+  if (res.status !== 204) {
+    throw res.status;
+  }
 }
 export const loadAllUserRoles = async () => {
   return await queryClient.fetchQuery({

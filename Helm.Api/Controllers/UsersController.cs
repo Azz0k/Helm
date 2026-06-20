@@ -50,6 +50,13 @@ namespace Helm.Api.Controllers
             var result = await sender.Send(command);
             return result.ToHttp(SuccessCodes.Ok);
         }
+        [HttpPut("role")]
+        public async Task<IActionResult> ReplaceRoleToUser([FromBody] ReplaceUserRoleCommand command)
+        {
+            var result = await sender.Send(command);
+            return result.ToHttp(SuccessCodes.Ok);
+        }
+
         [HttpPut("{userId}/role/{roleId}")]
         public async Task<IActionResult> AssignRoleToUser(int userId, int roleId)
         {

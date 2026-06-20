@@ -8,7 +8,7 @@ export const FetchData = (url:string) => {
     }
   })
 };
-export const UpdateData = async (url:string, body:string) => {
+export const UpdateData = async (url:string, body?:string) => {
   return  fetch(url, {
     method: 'PUT',
     body: body,
@@ -27,7 +27,7 @@ export const DeleteData = async (url:string) => {
   });
 };
 
-export const AddData = (url:string, body:string) => {
+export const AddData = (url:string, body?:string) => {
   return fetch(url, {
     method: 'POST',
     body: body,

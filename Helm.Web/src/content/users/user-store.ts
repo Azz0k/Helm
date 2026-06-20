@@ -1,28 +1,43 @@
 import {makeAutoObservable} from "mobx";
 import type {User} from "@/content/users/user-columns.tsx";
-import {addUser, deleteUser, loadAllUsers, updateUser} from "@/services/users.api.ts";
+import {
+  addUser,
+  replaceRoleToUser,
+  deleteUser,
+  loadAllUsers,
+  updateUser,
+  updateUserStatus
+} from "@/services/users.api.ts";
 import {rootStore} from "@/store/root-store.ts";
-import {type DraftUser, userMutationStore} from "@/content/users/user-mutation-store.ts";
+import {userMutationStore} from "@/content/users/user-mutation-store.ts";
+import type {UserRoles} from "@/content/user-roles/user-role-store.ts";
+import {loadAllUserRoles} from "@/services/user-roles.api.ts";
 
-type NewUser = {
-  Login: string;
-  Name: string,
-  password: string;
-  enabled: boolean,
-  isAdmin: boolean,
+type wrappedFunc = ( props : wrapperFuncProps) =>  Promise<boolean>;
+type wrapperFuncProps = {
+  userId?: number;
+  body?: string;
+  roleId?: number;
 }
-
 type Users = User[];
 class UserStore {
+
   constructor(){
     makeAutoObservable(this);
   }
-
   usersData: Users = [];
+  roleData : UserRoles = [];
   loading: boolean = false;
   error: string | null = null;
   userMutationStore = userMutationStore;
+  forbidden: boolean = false;
 
+  changeUserStatusText =  (id : number) => {
+    if (this.usersData.find(user => user.id === id)?.enabled === true){
+      return "Отключить";
+    }
+    return "Включить";
+  }
   handleCancelAction = () =>{
     this.userMutationStore.clear();
     this.error = null;
@@ -33,18 +48,10 @@ class UserStore {
       this.error = this.userMutationStore.error;
       return false;
     }
-    if (!this.userMutationStore.validatePassword()) {
-      this.error = this.userMutationStore.error;
-      return false;
-    }
     this.loading = true;
-    const result = await this.AddUser({...this.userMutationStore.draft, password:this.userMutationStore.passwordChangeValues.password1});
-    if (result){
-      this.error = null;
-      this.userMutationStore.clear();
-    }
-    this.loading = false;
-    return result;
+    return this.wrapRequest(this.addUser, {
+      body: JSON.stringify(this.userMutationStore.draft)
+    });
   }
   handleUpdateUser = async (id:number) => {
     this.error = null;
@@ -53,94 +60,135 @@ class UserStore {
       return false;
     }
     this.loading = true;
-    const result = await this.UpdateUser(id, this.userMutationStore.draft);
-    if (result){
-      this.error = null;
-      this.usersData = this.usersData.map(u=>{
-        if (u.id === id){
-          return {...this.userMutationStore.draft, id}
-        }
-        return u;
-      })
-      this.userMutationStore.clear();
-    }
-    this.loading = false;
-    return result;
+    return  this.wrapRequest(this.updateUser, {
+      body: JSON.stringify({...this.userMutationStore.draft, id})
+    });
   }
-  handlePasswordChange = async (user:User) =>{
+  handleUpdateUserStatus = async (id:number) => {
     this.error = null;
-    if (!this.userMutationStore.validatePassword()) {
-      this.error = this.userMutationStore.error;
+    this.loading = true;
+    const currentUser = this.usersData.find(user => user.id === id);
+    if (currentUser === undefined) {
+      this.error = "Обновите страницу";
       return false;
     }
-    this.loading = true;
-    const newUser: NewUser = {
-      Login: user.Login,
-      Name: user.Name,
-      password: this.userMutationStore.passwordChangeValues.password1,
-      enabled:user.enabled,
-      isAdmin: user.isAdmin,
-    }
-    const result = await this.UpdateUser(user.id, newUser);
-    if (result) {
-      this.error = null;
-      this.userMutationStore.clear();
-    }
-    this.loading = false;
-    return result;
+    const newRoles = this.userMutationStore.roles.map(r=>+r);
+    return this.wrapRequest(this.replaceRoleToUser,{
+      body: JSON.stringify({
+        Roles: newRoles,
+        UserId: currentUser.id
+      }),
+    });
   }
   handleDeleteUser = async (id:number) => {
+    this.error = null;
     this.loading = true;
-    const result = await this.DeleteUser(id);
-    if(result){
-      this.usersData = this.usersData.filter(user => user.id !== id);
-      this.error = null;
-    }
-    else {
-      this.error = "Не удалось удалить пользователя. Попробуйте обновить страницу."
-    }
-    this.loading = false;
-    return result;
+    return this.wrapRequest(this.deleteUser, {userId: id});
   }
-  async LoadAllUsers(){
+  handleChangeUserStatus = async (id:number) => {
+    this.error = null;
     this.loading = true;
-    try{
-      this.usersData = await loadAllUsers() as Users;
+    const currentUser: User | undefined = this.usersData.find(u=>u.id===id);
+    if (currentUser === undefined){
+      this.error = "Обновите страницу"
+      return  false;
     }
-    catch(error:unknown){
-      switch (error){
-        case 403:
-        case 401:
-          this.usersData = [];
-          rootStore.handleLogout();
-          break;
-        default:
-          break;
-      }
-    }
-    finally{
-      this.loading = false;
-    }
+    return this.wrapRequest(this.updateUserStatus, {
+      userId: id,
+      body: JSON.stringify({...currentUser, enabled: !currentUser.enabled})
+    });
   }
-  async AddUser(newUser:NewUser) {
+  handleFetchUsers = async () => {
+    this.error = null;
+    this.loading = true;
+    return this.wrapRequest(this.loadAllUsers, {});
+  }
+  loadAllUsers = async () => {
+    this.roleData = await loadAllUserRoles() as UserRoles;
+    this.usersData = await loadAllUsers() as Users;
+    return true;
+  }
+  addUser = async ({body}:wrapperFuncProps)  => {
+    const res: User = await addUser(body);
+    if (res) {
+      this.usersData = [...this.usersData, res];
+      return true;
+    }
+    this.error = 'Неизвестная ошибка';
+    return false;
+  }
+  updateUser = async ({body}:wrapperFuncProps) => {
+    const res :User = await updateUser(body);
+    if (res){
+      this.usersData = this.usersData.map(element =>{
+        if (element.id === res.id){
+          return res;
+        }
+        return element;
+      });
+      return true;
+    }
+    this.error = "Неизвестная ошибка";
+    return false;
+  }
+
+  replaceRoleToUser = async ({body}:wrapperFuncProps) => {
+    const res :User = await replaceRoleToUser(body);
+    if (res){
+      this.usersData = this.usersData.map(element =>{
+        if (element.id === res.id){
+          return res;
+        }
+        return element;
+      });
+      return true;
+    }
+    this.error = "Неизвестная ошибка";
+    return false;
+  }
+
+
+  updateUserStatus = async ({userId, body}:wrapperFuncProps) => {
+    const res :User = await updateUserStatus(userId, body);
+    if (res){
+      this.usersData = this.usersData.map(element =>{
+        if (element.id === res.id){
+          return res;
+        }
+        return element;
+      });
+      return true;
+    }
+    this.error = "Неизвестная ошибка";
+    return false;
+  }
+
+  deleteUser = async ({userId}:wrapperFuncProps) => {
+    await deleteUser(userId);
+    this.usersData = this.usersData.filter(user => user.id !== userId);
+    return true;
+  }
+  wrapRequest  =  async (func: wrappedFunc, props :wrapperFuncProps)  => {
     this.error = null;
     try {
-      const body = JSON.stringify(newUser);
-      const res: string = await addUser(body);
-      const id = parseInt(res);
-      if (!Number.isNaN(id)) {
-        if (!this.usersData.find(value => value.id === id)) {
-          const user:User = {...newUser, id:id};
-          this.usersData = [...this.usersData, user]
-          return true;
-        }
+      const result =  await func(props);
+      if (result){
+        this.error = null;
+        this.userMutationStore.clear();
       }
-      this.error = "Пользователь с таким id уже существует";
-      return false;
+      return result;
     }
     catch(error:unknown){
       switch (error){
+        case 409:
+          this.error = 'Роль с таким именем уже существует';
+          break;
+        case 400:
+          this.error = 'Неверные параметры запроса';
+          break;
         case 403:
+          this.forbidden = true;
+          break;
         case 401:
           this.usersData = [];
           this.error = null;
@@ -152,46 +200,8 @@ class UserStore {
       }
       return false;
     }
-  }
-  async UpdateUser (id:number,user:NewUser|DraftUser ) {
-    this.error = null;
-    try{
-      const body = JSON.stringify({...user, id});
-      await updateUser(body);
-      return true;
-    }
-    catch (error:unknown) {
-      switch (error){
-        case 403:
-        case 401:
-          this.usersData = [];
-          rootStore.handleLogout();
-          break;
-        case 400:
-          this.error = 'Пользователь с таким логином уже существует';
-          break;
-        case 404:
-          this.error = 'Не найден пользователь. Обновите страницу.';
-          break;
-        default:
-          this.error = 'Неизвестная ошибка';
-          break;
-      }
-      return false;
-    }
-  }
-  async DeleteUser(id:number) {
-    try {
-      const code = await deleteUser(id);
-      if (code === 401 || code === 403) {
-        this.usersData = [];
-        rootStore.handleLogout();
-        return false;
-      }
-      return code===204;
-    }
-    catch  {
-      return false;
+    finally {
+      this.loading = false;
     }
   }
 }

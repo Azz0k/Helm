@@ -81,5 +81,20 @@ namespace Helm.Core.Infrastructure.Repositories
             await dBContext.SaveChangesAsync(cancellationToken);
             return mapper.Map<UserDTO>(user);
         }
+
+        public async Task<UserDTO> ReplaceUserRoleAsync(User user, List<int> roles, CancellationToken cancellationToken)
+        {
+            user.Roles = [];
+            foreach (int roleId in roles)
+            {
+                UserRole? role = await dBContext.UserRoles.FindAsync(roleId);
+                if (role != null)
+                {
+                    user.Roles.Add(role);
+                }
+            }
+            await dBContext.SaveChangesAsync(cancellationToken);
+            return mapper.Map<UserDTO>(user);
+        }
     }
 }

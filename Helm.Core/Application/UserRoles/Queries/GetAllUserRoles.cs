@@ -8,15 +8,16 @@ using System.Text;
 
 namespace Helm.Core.Application.UserRoles.Queries
 {
-    public record GetUserRolesQuery : IRequest<GetOperationResult<List<UserRoleDTO>>>;
-    public class GetUserRolesQueryHandler : IRequestHandler<GetUserRolesQuery, GetOperationResult<List<UserRoleDTO>>>
+    [RequireRole("UserRoleManager")]
+    public record GetAllUserRolesQuery : IRequest<GetOperationResult<List<UserRoleDTO>>>;
+    public class GetAllUserRolesQueryHandler : IRequestHandler<GetAllUserRolesQuery, GetOperationResult<List<UserRoleDTO>>>
     {
         private IUserRoleRepository userRoleRepository;
-        public GetUserRolesQueryHandler(IUserRoleRepository userRoleRepository)
+        public GetAllUserRolesQueryHandler(IUserRoleRepository userRoleRepository)
         {
             this.userRoleRepository = userRoleRepository;
         }
-        public async Task<GetOperationResult<List<UserRoleDTO>>> Handle(GetUserRolesQuery request, CancellationToken cancellationToken)
+        public async Task<GetOperationResult<List<UserRoleDTO>>> Handle(GetAllUserRolesQuery request, CancellationToken cancellationToken)
         {
 
             List<UserRoleDTO> vm = await userRoleRepository.GetAllUserRolesAsync(cancellationToken);

@@ -5,6 +5,7 @@ using Helm.Core.Domain.Entities;
 using Helm.Core.Infrastructure.Contexts;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,15 +19,15 @@ using Xunit;
 
 namespace Helm.Tests
 {
-    public class UsersApiTests: IClassFixture<CustomWebApplicationFactory<Program>>
+    public class UsersApiTests: IClassFixture<NoAuthWebApplicationFactory<Program>>
     {
         private readonly ITestOutputHelper _testOutputHelper;
         private readonly HttpClient _client;
-        private readonly CustomWebApplicationFactory<Program> _factory;
+        private readonly NoAuthWebApplicationFactory<Program> _factory;
         private string apiUri = "/api/v1/Users";
         private string apiRolesUri = "/api/v1/UserRoles";
         public UsersApiTests(
-    CustomWebApplicationFactory<Program> factory, ITestOutputHelper testOutputHelper)
+    NoAuthWebApplicationFactory<Program> factory, ITestOutputHelper testOutputHelper)
         {
             _testOutputHelper = testOutputHelper;
             _factory = factory;
@@ -34,7 +35,7 @@ namespace Helm.Tests
             {
                 builder.ConfigureTestServices(services =>
                 {
-                    services.AddAuthentication(options =>
+                    services.AddAuthentication(options => 
                     {
                         options.DefaultAuthenticateScheme = "TestScheme";
                         options.DefaultChallengeScheme = "TestScheme";
@@ -270,6 +271,39 @@ namespace Helm.Tests
             Assert.DoesNotContain(secondRoleId, user.Roles);
             Assert.Single(user.Roles);
         }
+        [Fact]
+        public async Task UsersApi_ReplaceRoles_ShouldWorkCorrectly()
+        {
+            int userId = await CreateOneUser();
+            List<int> roles = new List<int>() { 1, 2 };
+            ReplaceUserRoleRequest request = new ReplaceUserRoleRequest { Roles = roles , UserId = userId};
+            var response = await _client.PutAsJsonAsync($"{apiUri}/role", request, TestContext.Current.CancellationToken);
+            UserDTO? user = await response.Content.ReadFromJsonAsync<UserDTO>(TestContext.Current.CancellationToken);
+            Assert.NotNull(user);
+            Assert.NotNull(user.Roles);
+            Assert.NotEmpty(user.Roles);
+            Assert.Contains(1, user.Roles);
+            Assert.Contains(2, user.Roles);
+            response = await _client.PutAsJsonAsync($"{apiUri}/role", request, TestContext.Current.CancellationToken); //indempotency check
+            user = await response.Content.ReadFromJsonAsync<UserDTO>(TestContext.Current.CancellationToken);
+            Assert.NotNull(user);
+            Assert.NotNull(user.Roles);
+            Assert.NotEmpty(user.Roles);
+            Assert.Contains(1, user.Roles);
+            Assert.Contains(2, user.Roles);
+            roles = new List<int>() { 1,  };
+            request = new ReplaceUserRoleRequest { Roles = roles, UserId = userId };
+            response = await _client.PutAsJsonAsync($"{apiUri}/role", request, TestContext.Current.CancellationToken);
+            user = await response.Content.ReadFromJsonAsync<UserDTO>(TestContext.Current.CancellationToken);
+            Assert.NotNull(user);
+            Assert.NotNull(user.Roles);
+            Assert.NotEmpty(user.Roles);
+            Assert.Contains(1, user.Roles);
+            Assert.DoesNotContain(2, user.Roles);
+            request = new ReplaceUserRoleRequest { Roles = roles, UserId = int.MaxValue };
+            response = await _client.PutAsJsonAsync($"{apiUri}/role", request, TestContext.Current.CancellationToken); 
+            Assert.Equal(404, (int)response.StatusCode);
+        }
         public class CreateUserRequest
         {
             public string? Name { get; set; }
@@ -294,6 +328,11 @@ namespace Helm.Tests
         public class UpdateUserPasswordRequest
         {
             public required string Password { get; set; }
+        }
+        public class ReplaceUserRoleRequest
+        {
+            public int UserId { get; set; }
+            public List<int> Roles { get; set; } = [];
         }
     }
 }

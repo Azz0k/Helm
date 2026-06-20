@@ -13,6 +13,7 @@ namespace Helm.Core.Application.UserRoles.Commands
 {
     public class UpdateUserRole
     {
+        [RequireRole("UserRoleManager")]
         public record UpdateUserRoleCommand : IRequest<GetOperationResult<UserRoleDTO>>
         {
             public required int Id { get; set; }

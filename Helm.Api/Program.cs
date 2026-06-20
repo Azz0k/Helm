@@ -56,6 +56,7 @@ namespace Helm.Api
                 cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
                 cfg.RegisterServicesFromAssembly(typeof(GetUsersQueryHandler).Assembly);
                 cfg.AddOpenBehavior(typeof(ValidationBehaviour<,>));
+                cfg.AddOpenBehavior(typeof(AuthorizationBehaviour<,>));
             });
             builder.Services.AddSpaStaticFiles(conf =>
             {
@@ -65,6 +66,9 @@ namespace Helm.Api
             builder.Services.AddDbContext<PostgresDBContext>(options => options.UseNpgsql(appSettings?.ConnectionString));
             builder.Services.AddScoped<IUserRepository,PostgresUserRepository>();
             builder.Services.AddScoped<IUserRoleRepository,PostgresUserRoleRepository>();
+            builder.Services.AddScoped<IUserContext, UserContext>();
+            builder.Services.AddScoped<IAuthorizationService, PostgresAuthorizationService>();
+            builder.Services.AddHttpContextAccessor();
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -93,7 +97,7 @@ namespace Helm.Api
                 });
             }
             var app = builder.Build();
-            app.UseMiddleware<ValidationExceptionHandlingMiddleware>();
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
             app.UseStaticFiles();
             if (appSettings?.AllowedOrigins != null)
             {

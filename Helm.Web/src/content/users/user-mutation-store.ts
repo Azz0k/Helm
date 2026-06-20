@@ -2,16 +2,14 @@ import {makeAutoObservable} from "mobx";
 import type {ChangeEvent} from "react";
 
 export type DraftUser = {
-  Login: string;
-  Name: string,
+  login: string;
+  name: string,
   enabled: boolean,
-  isAdmin: boolean,
 };
 export const defaultDraftUser = {
-  Login: "",
-  Name: "",
-  isAdmin: false,
-  enabled: true
+  login: "",
+  name: "",
+  enabled: true,
 };
 
 class UserMutationStore{
@@ -19,62 +17,38 @@ class UserMutationStore{
     makeAutoObservable(this);
   }
   error: string | null = null;
-  passwordChangeValues = {
-    password1: "",
-    password2: ""
-  }
   draft:DraftUser = defaultDraftUser;
+  roles: string[] = [];
   createNewDraft =(user:DraftUser)=>{
     this.draft = user;
   }
   clear = () =>{
     this.error = null;
     this.draft = defaultDraftUser;
-    this.passwordChangeValues.password1 = "";
-    this.passwordChangeValues.password2 = "";
+    this.roles = [];
   }
-  validatePassword = () =>{
-    if (this.passwordChangeValues.password1 !== this.passwordChangeValues.password2) {
-      this.error = "Пароли не совпадают";
-      return false;
-    }
-    if (this.passwordChangeValues.password1.length<8) {
-      this.error = "Пароль слишком короткий";
-      return false;
-    }
-    this.error = null;
-    return true;
-  }
-  handlePassword1ChangeValue = (event: ChangeEvent<HTMLInputElement>) => {
-    this.passwordChangeValues.password1 = event.target.value;
-  }
-  handlePassword2ChangeValue = (event: ChangeEvent<HTMLInputElement>) => {
-    this.passwordChangeValues.password2 = event.target.value;
-  }
+
   validateDraft = ()=>{
-    this.draft.Name = this.draft.Name.trim();
-    this.draft.Login = this.draft.Login.trim();
-    if (this.draft.Name.length===0) {
+    this.draft.name = this.draft.name.trim();
+    this.draft.login = this.draft.login.trim();
+    if (this.draft.name.length===0) {
       this.error = "ФИО не должно быть пустым";
       return false;
     }
-    if (this.draft.Login.length===0) {
+    if (this.draft.login.length===0) {
       this.error = "Логин не должен быть пустым";
       return false;
     }
     return true;
   }
   handleDraftUserNameChangeValue = (event: ChangeEvent<HTMLInputElement>) => {
-    this.draft.Login = event.target.value;
+    this.draft.login = event.target.value;
   }
   handleDraftFullNameChangeValue = (event: ChangeEvent<HTMLInputElement>) => {
-    this.draft.Name = event.target.value;
+    this.draft.name = event.target.value;
   }
-  handleDraftIsAdminCheckedChange = (value:boolean) => {
-    this.draft.isAdmin = value;
-  }
-  handleDraftEnabledCheckedChange = (value:boolean) => {
-    this.draft.enabled = value;
+  handleToggleRoles = (value:string[]) => {
+    this.roles = value;
   }
 }
 

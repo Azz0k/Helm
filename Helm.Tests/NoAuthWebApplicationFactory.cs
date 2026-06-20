@@ -13,11 +13,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using System.Data.Common;
 
-
 namespace Helm.Tests
 {
-    public class CustomWebApplicationFactory<TProgram>
-: WebApplicationFactory<TProgram> where TProgram : class
+    public  class NoAuthWebApplicationFactory <TProgram> : CustomWebApplicationFactory<TProgram> where TProgram : class
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -26,6 +24,13 @@ namespace Helm.Tests
                 var builder = new ConfigurationBuilder().AddJsonFile($"HelperTestsAppSettings.json");
                 IConfiguration config = builder.Build();
                 string dbConn = config["ConnectionString"];
+
+                var mediatRServices = services.SingleOrDefault(
+                      s => (s.ImplementationType?.FullName ?? "").Contains("AuthorizationBehaviour"));
+                if (mediatRServices != null)
+                {
+                    services.Remove(mediatRServices);
+                }
                 var dbContextDescriptor = services.SingleOrDefault(
                     d => d.ServiceType ==
                         typeof(IDbContextOptionsConfiguration<PostgresDBContext>));
@@ -50,8 +55,5 @@ namespace Helm.Tests
 
             builder.UseEnvironment("Development");
         }
-
     }
 }
-
-

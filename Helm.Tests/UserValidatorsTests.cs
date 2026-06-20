@@ -19,6 +19,7 @@ namespace Helm.Tests
         private UpdateUserCommandValidator updateUserCommandValidator = new();
         private UpdateUserPasswordCommandValidator updateUserPasswordCommandValidator = new();
         private UpdateUserStatusCommandValidator updateUserStatusCommandValidator = new();
+        private ReplaceUserRoleCommandValidator replaceUserRoleCommandValidator = new();
         public UserValidatorsTests() { }
         private CreateUserCommand GenerateValidCreateUserCommand()
         {
@@ -77,6 +78,14 @@ namespace Helm.Tests
             {
                 Id = 1,
                 Enabled = true,
+            };
+        }
+        private ReplaceUserRoleCommand GenerateValidReplaceUserRoleCommand()
+        {
+            return new ReplaceUserRoleCommand()
+            {
+                UserId = 1,
+                Roles = []
             };
         }
         [Fact]
@@ -231,6 +240,26 @@ namespace Helm.Tests
             command.UserId = userId;
             var result = removeUserRoleCommandValidator.TestValidate(command);
             result.ShouldHaveValidationErrorFor(x => x.UserId);
+        }
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        public void UsersMustContainOnlyPositiveIds_ReplaceUserRoleCommand(int userId)
+        {
+            var command = GenerateValidReplaceUserRoleCommand();
+            command.UserId = userId;
+            var result = replaceUserRoleCommandValidator.TestValidate(command);
+            result.ShouldHaveValidationErrorFor(x => x.UserId);
+        }
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        public void RolesMustContainOnlyPositiveIds_ReplaceUserRoleCommand(int roleId)
+        {
+            var command = GenerateValidReplaceUserRoleCommand();
+            command.Roles.Add(roleId);
+            var result = replaceUserRoleCommandValidator.TestValidate(command);
+            result.ShouldHaveValidationErrorFor(x => x.Roles);
         }
         [Fact]
         public void HappyPath_UpdateUserCommand()

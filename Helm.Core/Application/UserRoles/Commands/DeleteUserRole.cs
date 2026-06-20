@@ -12,6 +12,7 @@ using System.Text;
 
 namespace Helm.Core.Application.UserRoles.Commands
 {
+    [RequireRole("UserRoleManager")]
     public record DeleteUserRoleCommand : IRequest<GetOperationResult<object>>
     {
         public required int Id { get; set; }

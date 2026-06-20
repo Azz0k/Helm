@@ -23,7 +23,7 @@ namespace Helm.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllUserRoles()
         {
-            var result = await sender.Send(new GetUserRolesQuery());
+            var result = await sender.Send(new GetAllUserRolesQuery());
             return result.ToHttp(SuccessCodes.Ok);
         }
         [HttpPost]
