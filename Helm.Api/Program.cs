@@ -5,9 +5,6 @@ using Helm.Core.Application.Users.Queries;
 using Helm.Core.Infrastructure.Configuration;
 using Helm.Core.Infrastructure.Contexts;
 using Helm.Core.Infrastructure.Repositories;
-using Helm.Razor;
-using Helm.Razor.MyFeature.Pages;
-using Helm.Core.Infrastructure.Renderer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Protocols;
@@ -66,7 +63,6 @@ namespace Helm.Api
             });
             builder.Services.AddControllers();
             builder.Services.AddMvcCore().AddRazorViewEngine();
-                //.AddApplicationPart(typeof(Page1Model).Assembly); ;
             builder.Services.AddTransient<Helm.Core.Infrastructure.Renderer.IHtmlRenderer, Helm.Core.Infrastructure.Renderer.HtmlRenderer>();
             builder.Services.AddDbContext<PostgresDBContext>(options => options.UseNpgsql(appSettings?.ConnectionString));
             builder.Services.AddScoped<IUserRepository,PostgresUserRepository>();
