@@ -68,6 +68,7 @@ namespace Helm.Api
             builder.Services.AddScoped<IUserRepository,PostgresUserRepository>();
             builder.Services.AddScoped<IUserRoleRepository,PostgresUserRoleRepository>();
             builder.Services.AddScoped<IUserContext, UserContext>();
+            builder.Services.AddScoped<IEquipmentRepository,PostgresEquipmentRepository>();
             builder.Services.AddScoped<IAuthorizationService, PostgresAuthorizationService>();
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
