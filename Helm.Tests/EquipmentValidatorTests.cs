@@ -13,6 +13,7 @@ namespace Helm.Tests
     {
         private CreateEquipmentCommandValidator createEquipmentCommandValidator = new();
         private RenameEquipmentCommandValidator renameEquipmentCommandValidator = new();
+        private IssueEquipmentCommandValidator issueEquipmentCommandValidator = new();
         private CreateEquipmentCommand GenerateValidCreateEquipmentCommand()
         {
             return new CreateEquipmentCommand()
@@ -22,7 +23,11 @@ namespace Helm.Tests
         }
         private RenameEquipmentCommand GenerateValidRenameEquipmentCommand()
         {
-            return new RenameEquipmentCommand() { Id = 1 , Name = new string('a', EquipmentConstants.NameMaxLength) };
+            return new RenameEquipmentCommand() { Id = 1, Name = new string('a', EquipmentConstants.NameMaxLength) };
+        }
+        private IssueEquipmentCommand GenerateValidIssueEquipmentCommand()
+        {
+            return new IssueEquipmentCommand() { Id = 1, IssuedBy = new string('a', EquipmentConstants.IssuedByMaxLength) };
         }
         [Theory]
         [InlineData(" ")]
@@ -66,6 +71,33 @@ namespace Helm.Tests
             var command = GenerateValidRenameEquipmentCommand();
             command.Id = id;
             var result = renameEquipmentCommandValidator.TestValidate(command);
+            result.ShouldHaveValidationErrorFor(x => x.Id);
+        }
+        [Theory]
+        [InlineData(" ")]
+        [InlineData("")]
+        [InlineData("\t")]
+        [InlineData("\r")]
+        [InlineData("\n")]
+        [InlineData("Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean ma")]//too long
+        [InlineData(" test ")]
+        [InlineData(" test")]
+        [InlineData("test ")]
+        public void IssuedByMustBeInvalid_IssueEquipmentCommand(string issuedBy)
+        {
+            var command = GenerateValidIssueEquipmentCommand();
+            command.IssuedBy = issuedBy;
+            var result = issueEquipmentCommandValidator.TestValidate(command);
+            result.ShouldHaveValidationErrorFor(x => x.IssuedBy);
+        }
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        public void IdMustBeInvalid_IssueEquipmentCommand(int id)
+        {
+            var command = GenerateValidIssueEquipmentCommand();
+            command.Id = id;
+            var result = issueEquipmentCommandValidator.TestValidate(command);
             result.ShouldHaveValidationErrorFor(x => x.Id);
         }
     }

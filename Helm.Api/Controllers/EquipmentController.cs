@@ -36,5 +36,11 @@ namespace Helm.Api.Controllers
             var result = await sender.Send(command);
             return result.ToHttp(SuccessCodes.Ok);
         }
+        [HttpPut("issue")]
+        public async Task<IActionResult> IssueEquipment([FromBody] IssueEquipmentCommand command)
+        {
+            var result = await sender.Send(command);
+            return result.ToHttp(SuccessCodes.Ok);
+        }
     }
 }

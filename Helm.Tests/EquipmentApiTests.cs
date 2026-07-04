@@ -70,8 +70,14 @@ namespace Helm.Tests
         }
         private async Task<HttpResponseMessage?> RenameAsync(string name, int id)
         {
-            RenameCreateEquipmentRequest request = new() { Name = name, Id = id };
+            RenameEquipmentRequest request = new() { Name = name, Id = id };
             var response = await _client.PutAsJsonAsync(apiUri, request);
+            return response;
+        }
+        private async Task<HttpResponseMessage?> IssueAsync(string issuedBy, int id)
+        {
+            IssueEquipmentRequest request = new() { IssuedBy = issuedBy, Id = id };
+            var response = await _client.PutAsJsonAsync($"{apiUri}/issue", request);
             return response;
         }
         [Fact]
@@ -101,7 +107,7 @@ namespace Helm.Tests
             Assert.Equal(409, (int)response.StatusCode);
         }
         [Fact]
-        public async Task EquipmentApi_PUT_HappyPath()
+        public async Task EquipmentApi_PUT_Rename_HappyPath()
         {
             string name = Guid.NewGuid().ToString();
             var response = await RenameAsync(name, 1);
@@ -112,10 +118,29 @@ namespace Helm.Tests
             Assert.Equal(200, (int)response.StatusCode);
         }
         [Fact]
-        public async Task EquipmentApi_PUT_UnknownEntity_ReturnsNotFound()
+        public async Task EquipmentApi_PUT_Rename_UnknownEntity_ReturnsNotFound()
         {
             string name = Guid.NewGuid().ToString();
             var response = await RenameAsync(name, int.MaxValue);
+            Assert.NotNull(response);
+            Assert.Equal(404, (int)response.StatusCode);
+        }
+        [Fact]
+        public async Task EquipmentApi_PUT_Issue_HappyPath()
+        {
+            string issuedBy = Guid.NewGuid().ToString();
+            var response = await IssueAsync(issuedBy, 1);
+            Assert.NotNull(response);
+            Assert.Equal(200, (int)response.StatusCode);
+            response = await IssueAsync(issuedBy, 1); //Idempotency PUT
+            Assert.NotNull(response);
+            Assert.Equal(200, (int)response.StatusCode);
+        }
+        [Fact]
+        public async Task EquipmentApi_PUT_Issue_UnknownEntity_ReturnsNotFound()
+        {
+            string name = Guid.NewGuid().ToString();
+            var response = await IssueAsync(name, int.MaxValue);
             Assert.NotNull(response);
             Assert.Equal(404, (int)response.StatusCode);
         }
@@ -126,9 +151,14 @@ namespace Helm.Tests
         public bool? IsBulk { get; set; } = null;
 
     }
-    class RenameCreateEquipmentRequest
+    class RenameEquipmentRequest
     {
         public required string Name { get; set; }
+        public required int Id { get; set; }
+    }
+    class IssueEquipmentRequest
+    {
+        public required string IssuedBy { get; set; }
         public required int Id { get; set; }
     }
 }

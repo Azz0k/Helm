@@ -7,5 +7,6 @@ namespace Helm.Core.Domain.Constants
     public class EquipmentConstants
     {
         public const int NameMaxLength = 500;
+        public const int IssuedByMaxLength = 100;
     }
 }
