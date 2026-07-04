@@ -11,6 +11,7 @@ using System.Text;
 
 namespace Helm.Core.Application.Equipment.Equipment.Commands
 {
+    [RequireRole("EquipmentManager")]
     public record LoseEquipmentCommand : IRequest<GetOperationResult<EquipmentDTO>>
     {
         public required int Id { get; set; }

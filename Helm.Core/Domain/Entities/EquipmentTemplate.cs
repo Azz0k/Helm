@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Helm.Core.Domain.Entities
+﻿namespace Helm.Core.Domain.Entities
 {
     public class EquipmentTemplate
     {
@@ -54,7 +50,7 @@ namespace Helm.Core.Domain.Entities
             Enabled = false;
             SetModified(user);
         }
-        public void SetName(User user, string name)
+        public void Rename(User user, string name)
         {
             if (Deleted) return;
             if (name == Name) return;

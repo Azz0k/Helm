@@ -9,6 +9,7 @@ using MediatR;
 
 namespace Helm.Core.Application.Equipment.Equipment.Commands
 {
+    [RequireRole("EquipmentManager")]
     public record RenameEquipmentCommand :IRequest<GetOperationResult<EquipmentDTO>>
     {
         public required int Id { get; set; }
