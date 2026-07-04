@@ -66,7 +66,13 @@ namespace Helm.Tests
         {
             CreateEquipmentRequest request = new() { Name = name, IsBulk = isBulk };
             var response = await _client.PostAsJsonAsync(apiUri, request);
-            return response; 
+            return response;
+        }
+        private async Task<HttpResponseMessage?> RenameAsync(string name, int id)
+        {
+            RenameCreateEquipmentRequest request = new() { Name = name, Id = id };
+            var response = await _client.PutAsJsonAsync(apiUri, request);
+            return response;
         }
         [Fact]
         public async Task EquipmentApi_GET_HappyPath()
@@ -94,11 +100,35 @@ namespace Helm.Tests
             Assert.NotNull(response);
             Assert.Equal(409, (int)response.StatusCode);
         }
+        [Fact]
+        public async Task EquipmentApi_PUT_HappyPath()
+        {
+            string name = Guid.NewGuid().ToString();
+            var response = await RenameAsync(name, 1);
+            Assert.NotNull(response);
+            Assert.Equal(200, (int)response.StatusCode);
+            response = await RenameAsync(name, 1); //Idempotency PUT
+            Assert.NotNull(response);
+            Assert.Equal(200, (int)response.StatusCode);
+        }
+        [Fact]
+        public async Task EquipmentApi_PUT_UnknownEntity_ReturnsNotFound()
+        {
+            string name = Guid.NewGuid().ToString();
+            var response = await RenameAsync(name, int.MaxValue);
+            Assert.NotNull(response);
+            Assert.Equal(404, (int)response.StatusCode);
+        }
     }
     class CreateEquipmentRequest
     {
         public required string Name { get; set; }
         public bool? IsBulk { get; set; } = null;
 
+    }
+    class RenameCreateEquipmentRequest
+    {
+        public required string Name { get; set; }
+        public required int Id { get; set; }
     }
 }

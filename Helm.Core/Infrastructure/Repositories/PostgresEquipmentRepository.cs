@@ -25,10 +25,18 @@ namespace Helm.Core.Infrastructure.Repositories
             await dBContext.SaveChangesAsync(cancellationToken);
             return mapper.Map<EquipmentDTO>(equipment);
         }
+        public async Task SaveAsync(CancellationToken cancellationToken)
+        {
+            await dBContext.SaveChangesAsync(cancellationToken);
+        }
 
         public async Task<Equipment?> FindEquipmentByNameAsync(string name, CancellationToken cancellationToken)
         {
             return await dBContext.Equipment.Include(e => e.CreatedBy).Include(e=>e.LastModifiedBy).FirstOrDefaultAsync(e=>e.Name == name,cancellationToken);
+        }
+        public async Task<Equipment?> FindEquipmentByIdAsync(int id, CancellationToken cancellationToken)
+        {
+            return await dBContext.Equipment.Include(e => e.CreatedBy).Include(e => e.LastModifiedBy).FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
         }
 
         public async Task<List<EquipmentDTO>> GetAllEquipmentAsync(CancellationToken cancellationToken)
@@ -42,6 +50,10 @@ namespace Helm.Core.Infrastructure.Repositories
         public async Task<bool> IsEquipmentExistsAsync(string name, CancellationToken cancellationToken)
         {
             return await dBContext.Equipment.FirstOrDefaultAsync(e => e.Name == name, cancellationToken)!=null;
+        }
+        public async Task<bool> IsEquipmentExistsAsync(int id, CancellationToken cancellationToken)
+        {
+            return await dBContext.Equipment.FindAsync(id, cancellationToken) != null;
         }
     }
 }

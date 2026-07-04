@@ -12,12 +12,17 @@ namespace Helm.Tests
     public class EquipmentValidatorTests
     {
         private CreateEquipmentCommandValidator createEquipmentCommandValidator = new();
+        private RenameEquipmentCommandValidator renameEquipmentCommandValidator = new();
         private CreateEquipmentCommand GenerateValidCreateEquipmentCommand()
         {
             return new CreateEquipmentCommand()
             {
                 Name = new string('a', EquipmentConstants.NameMaxLength)
             };
+        }
+        private RenameEquipmentCommand GenerateValidRenameEquipmentCommand()
+        {
+            return new RenameEquipmentCommand() { Id = 1 , Name = new string('a', EquipmentConstants.NameMaxLength) };
         }
         [Theory]
         [InlineData(" ")]
@@ -35,6 +40,33 @@ namespace Helm.Tests
             command.Name = name;
             var result = createEquipmentCommandValidator.TestValidate(command);
             result.ShouldHaveValidationErrorFor(x => x.Name);
+        }
+        [Theory]
+        [InlineData(" ")]
+        [InlineData("")]
+        [InlineData("\t")]
+        [InlineData("\r")]
+        [InlineData("\n")]
+        [InlineData("Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus")]//too long
+        [InlineData(" test ")]
+        [InlineData(" test")]
+        [InlineData("test ")]
+        public void NameMustBeInvalid_RenameEquipmentCommand(string name)
+        {
+            var command = GenerateValidRenameEquipmentCommand();
+            command.Name = name;
+            var result = renameEquipmentCommandValidator.TestValidate(command);
+            result.ShouldHaveValidationErrorFor(x => x.Name);
+        }
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        public void IdMustBeInvalid_RenameEquipmentCommand(int id)
+        {
+            var command = GenerateValidRenameEquipmentCommand();
+            command.Id = id;
+            var result = renameEquipmentCommandValidator.TestValidate(command);
+            result.ShouldHaveValidationErrorFor(x => x.Id);
         }
     }
 }

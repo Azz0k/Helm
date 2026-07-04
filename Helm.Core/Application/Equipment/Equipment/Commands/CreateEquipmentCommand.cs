@@ -17,8 +17,8 @@ namespace Helm.Core.Application.Equipment.Equipment.Commands
     {
         private IEquipmentRepository equipmentRepository;
         private IUserRepository userRepository;
-        private readonly IValidator<CreateEquipmentCommand> validator;
         private readonly IUserContext userContext;
+        private readonly IValidator<CreateEquipmentCommand> validator;
         public CreateEquipmentCommandHandler(IEquipmentRepository equipmentRepository, IValidator<CreateEquipmentCommand> validator, IUserContext userContext, IUserRepository userRepository)
         {
             this.validator  = validator;

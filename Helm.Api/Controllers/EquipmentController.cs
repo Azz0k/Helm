@@ -30,5 +30,11 @@ namespace Helm.Api.Controllers
             var result = await sender.Send(command);
             return result.ToHttp(SuccessCodes.Created);
         }
+        [HttpPut]
+        public async Task<IActionResult> RenameEquipment([FromBody] RenameEquipmentCommand command)
+        {
+            var result = await sender.Send(command);
+            return result.ToHttp(SuccessCodes.Ok);
+        }
     }
 }
