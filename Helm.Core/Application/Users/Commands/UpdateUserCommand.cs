@@ -37,7 +37,7 @@ namespace Helm.Core.Application.Users.Commands
 
             if (request.Login != null)
             {
-                user.Login = request.Login;
+                user.Login = request.Login.ToLower();
             }
             if (request.Name != null)
             {

@@ -15,7 +15,7 @@ namespace Helm.Core.Application.Common
         public sealed record Invalid : GetOperationResult<T>;
         public sealed record Forbidden : GetOperationResult<T>;
         public sealed record Conflict : GetOperationResult<T>;
-        
+        public sealed record Unexpected : GetOperationResult<T>;
     }
 
 }

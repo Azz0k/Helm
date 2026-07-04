@@ -16,12 +16,13 @@ namespace Helm.Core.Domain.Entities
         public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
         public DateTimeOffset? LastModifiedAt { get; private set; } = null;
         public User? LastModifiedBy { get; private set; } = null;
-        public Equipment(User CreatedBy, string Name, bool IsBulk = false)
+        public Equipment(User CreatedBy, string Name, bool? IsBulk = false)
         {
             this.CreatedBy = CreatedBy;
             this.Name = Name;
-            this.IsBulk = IsBulk;
+            this.IsBulk = IsBulk ?? false;
         }
+        
         public Equipment()
         {
 

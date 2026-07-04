@@ -37,6 +37,7 @@ namespace Helm.Core.Application.Users.Commands
 
         public async Task<GetOperationResult<UserDTO>> Handle(CreateUserCommand command, CancellationToken cancellationToken)
         {
+            command.Login = command.Login.ToLower();
             User? user = await userRepository.FindUserByLoginAsync(command.Login, cancellationToken);
             if (user != null)
             {
