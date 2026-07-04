@@ -14,6 +14,8 @@ namespace Helm.Tests
         private CreateEquipmentCommandValidator createEquipmentCommandValidator = new();
         private RenameEquipmentCommandValidator renameEquipmentCommandValidator = new();
         private IssueEquipmentCommandValidator issueEquipmentCommandValidator = new();
+        private ReturnEquipmentCommandValidator returnEquipmentCommandValidator = new();
+        private LoseEquipmentCommandValidator loseEquipmentCommandValidator = new();
         private CreateEquipmentCommand GenerateValidCreateEquipmentCommand()
         {
             return new CreateEquipmentCommand()
@@ -28,6 +30,14 @@ namespace Helm.Tests
         private IssueEquipmentCommand GenerateValidIssueEquipmentCommand()
         {
             return new IssueEquipmentCommand() { Id = 1, IssuedBy = new string('a', EquipmentConstants.IssuedByMaxLength) };
+        }
+        private ReturnEquipmentCommand GenerateValidReturnEquipmentCommand()
+        {
+            return new ReturnEquipmentCommand() { Id = 1 };
+        }
+        private LoseEquipmentCommand GenerateValidLoseEquipmentCommand()
+        {
+            return new LoseEquipmentCommand() { Id = 1 };
         }
         [Theory]
         [InlineData(" ")]
@@ -98,6 +108,26 @@ namespace Helm.Tests
             var command = GenerateValidIssueEquipmentCommand();
             command.Id = id;
             var result = issueEquipmentCommandValidator.TestValidate(command);
+            result.ShouldHaveValidationErrorFor(x => x.Id);
+        }
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        public void IdMustBeInvalid_ReturnEquipmentCommand(int id)
+        {
+            var command = GenerateValidReturnEquipmentCommand();
+            command.Id = id;
+            var result = returnEquipmentCommandValidator.TestValidate(command);
+            result.ShouldHaveValidationErrorFor(x => x.Id);
+        }
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        public void IdMustBeInvalid_LoseEquipmentCommand(int id)
+        {
+            var command = GenerateValidLoseEquipmentCommand();
+            command.Id = id;
+            var result = loseEquipmentCommandValidator.TestValidate(command);
             result.ShouldHaveValidationErrorFor(x => x.Id);
         }
     }

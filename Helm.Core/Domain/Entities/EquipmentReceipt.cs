@@ -57,7 +57,7 @@ namespace Helm.Core.Domain.Entities
             }
             foreach (var itemId in lostItems)
             {
-                Equipment.FirstOrDefault(i => i.Id == itemId)?.Lost(user);
+                Equipment.FirstOrDefault(i => i.Id == itemId)?.Lose(user);
             }
         }
 

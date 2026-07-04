@@ -1,5 +1,7 @@
 ﻿using Helm.Api;
+using Helm.Core.Application.Equipment.Equipment.Commands;
 using Helm.Core.Application.Equipment.Equipment.Queries;
+using Helm.Core.Application.UserRoles.Queries;
 using Helm.Core.Application.Users.Commands;
 using Helm.Core.Application.Users.Queries;
 using Helm.Core.Infrastructure.Contexts;
@@ -80,6 +82,18 @@ namespace Helm.Tests
             var response = await _client.PutAsJsonAsync($"{apiUri}/issue", request);
             return response;
         }
+        private async Task<HttpResponseMessage?> ReturnAsync(int id)
+        {
+            ReturnEquipmentCommand request = new() { Id = id };
+            var response = await _client.PutAsJsonAsync($"{apiUri}/return", request);
+            return response;
+        }
+        private async Task<HttpResponseMessage?> LoseAsync(int id)
+        {
+            LoseEquipmentCommand request = new() { Id = id };
+            var response = await _client.PutAsJsonAsync($"{apiUri}/lose", request);
+            return response;
+        }
         [Fact]
         public async Task EquipmentApi_GET_HappyPath()
         {
@@ -144,6 +158,46 @@ namespace Helm.Tests
             Assert.NotNull(response);
             Assert.Equal(404, (int)response.StatusCode);
         }
+        [Fact]
+        public async Task EquipmentApi_PUT_Return_HappyPath()
+        {
+            var response = await ReturnAsync(1);
+            Assert.NotNull(response);
+            Assert.Equal(200, (int)response.StatusCode);
+            response = await ReturnAsync(1); //Idempotency PUT
+            Assert.NotNull(response);
+            Assert.Equal(200, (int)response.StatusCode);
+        }
+        [Fact]
+        public async Task EquipmentApi_PUT_Return_UnknownEntity_ReturnsNotFound()
+        {
+            var response = await ReturnAsync(int.MaxValue);
+            Assert.NotNull(response);
+            Assert.Equal(404, (int)response.StatusCode);
+        }
+        [Fact]
+        public async Task EquipmentApi_PUT_Lose_HappyPath()
+        {
+            string name = Guid.NewGuid().ToString();
+            var response = await CreateAsync(name, false);
+            Assert.NotNull(response);
+            Assert.Equal(201, (int)response.StatusCode);
+            EquipmentDTO? equipment = await response.Content.ReadFromJsonAsync<EquipmentDTO>();
+            Assert.NotNull(equipment);
+            response = await LoseAsync(equipment.Id);
+            Assert.NotNull(response);
+            Assert.Equal(200, (int)response.StatusCode);
+            response = await LoseAsync(equipment.Id); //Idempotency PUT
+            Assert.NotNull(response);
+            Assert.Equal(200, (int)response.StatusCode);
+        }
+        [Fact]
+        public async Task EquipmentApi_PUT_Lose_UnknownEntity_ReturnsNotFound()
+        {
+            var response = await LoseAsync(int.MaxValue);
+            Assert.NotNull(response);
+            Assert.Equal(404, (int)response.StatusCode);
+        }
     }
     class CreateEquipmentRequest
     {
@@ -161,4 +215,5 @@ namespace Helm.Tests
         public required string IssuedBy { get; set; }
         public required int Id { get; set; }
     }
+    
 }

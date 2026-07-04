@@ -42,5 +42,17 @@ namespace Helm.Api.Controllers
             var result = await sender.Send(command);
             return result.ToHttp(SuccessCodes.Ok);
         }
+        [HttpPut("return")]
+        public async Task<IActionResult> ReturnEquipment([FromBody] ReturnEquipmentCommand command)
+        {
+            var result = await sender.Send(command);
+            return result.ToHttp(SuccessCodes.Ok);
+        }
+        [HttpPut("lose")]
+        public async Task<IActionResult> LoseEquipment([FromBody] LoseEquipmentCommand command)
+        {
+            var result = await sender.Send(command);
+            return result.ToHttp(SuccessCodes.Ok);
+        }
     }
 }
