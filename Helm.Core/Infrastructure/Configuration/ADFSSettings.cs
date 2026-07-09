@@ -6,8 +6,8 @@ namespace Helm.Core.Infrastructure.Configuration
 {
     public class ADFSSettings
     {
-        public string? ADFSDomain { get; set; }
-        public string? ADFSAudience { get; set; }
-        public string? ADFSIssuer { get; set; }
+        public required string ADFSDomain { get; init; }
+        public required string ADFSAudience { get; init; }
+        public required string ADFSIssuer { get; init; }
     }
 }

@@ -34,6 +34,7 @@ namespace Helm.Core.Infrastructure.Configuration
                 RuleFor(s => s.ConnectionString).NotNull().NotEmpty();
                 RuleFor(s => s.JWTSecretCode).NotNull().NotEmpty();
                 RuleFor(s => s.MediatRLicense).NotNull().NotEmpty();
+                RuleFor(s => s.AllowedOrigins).NotNull().NotEmpty();
                 RuleFor(s => s.ADFS).NotNull().DependentRules(() =>
                 {
                     RuleFor(s => s.ADFS.ADFSDomain).NotNull().NotEmpty().When(s => s.ADFS != null);
