@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Text;
 using Xunit;
 
-namespace Helm.Tests
+namespace Helm.Tests.ValidatorTests
 {
     public class UserValidatorsTests
     {

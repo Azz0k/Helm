@@ -17,7 +17,7 @@ using System.Text;
 using System.Xml.Linq;
 using Xunit;
 
-namespace Helm.Tests
+namespace Helm.Tests.ApiTests
 {
     public class UsersApiTests: IClassFixture<NoAuthWebApplicationFactory<Program>>
     {

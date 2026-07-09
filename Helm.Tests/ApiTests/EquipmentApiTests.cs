@@ -15,7 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Json;
 using Xunit;
 
-namespace Helm.Tests
+namespace Helm.Tests.ApiTests
 {
     public class EquipmentApiTests : IClassFixture<NoAuthWebApplicationFactory<Program>>
     {
@@ -103,7 +103,6 @@ namespace Helm.Tests
         [Fact]
         public async Task EquipmentApi_POST_HappyPath()
         {
-            //TODO create user before
             string name = Guid.NewGuid().ToString();
             var response = await CreateAsync(name, false);
             Assert.NotNull(response);

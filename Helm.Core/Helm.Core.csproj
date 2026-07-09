@@ -18,7 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Application\Equipment\EquipmentTemplate\Commands\" />
     <Folder Include="Domain\Enums\" />
   </ItemGroup>
 

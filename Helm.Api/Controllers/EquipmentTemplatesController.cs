@@ -1,4 +1,5 @@
 ﻿using Helm.Core.Application.Common;
+using Helm.Core.Application.Equipment.EquipmentTemplate.Commands;
 using Helm.Core.Application.Equipment.EquipmentTemplate.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -22,6 +23,12 @@ namespace Helm.Api.Controllers
         {
             var result = await sender.Send(new GetAllEquipmentTemplatesQuery());
             return result.ToHttp(SuccessCodes.Ok);
+        }
+        [HttpPost]
+        public async Task<IActionResult> CreatEquipmentTemplate([FromBody] CreateEquipmentTemplateCommand command)
+        {
+            var result = await sender.Send(command);
+            return result.ToHttp(SuccessCodes.Created);
         }
     }
 }

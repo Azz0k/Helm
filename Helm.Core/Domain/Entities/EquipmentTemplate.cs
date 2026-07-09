@@ -14,12 +14,12 @@
         public User? LastModifiedBy { get; private set; } = null;
         public DateTimeOffset? DeletedAt { get; private set; } = null;
         public User? DeletedBy { get; private set; } = null;
-        public EquipmentTemplate(User user, string name, string renderTemplateKey, string description = "") 
+        public EquipmentTemplate(User user, string name, string renderTemplateKey, string? description) 
         {
             CreatedBy = user;
             Name = name;
             RenderTemplateKey = renderTemplateKey;
-            Description = description;
+            Description = description ?? string.Empty;
         }
         public EquipmentTemplate(){
 

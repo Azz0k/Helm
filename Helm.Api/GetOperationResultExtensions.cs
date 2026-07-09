@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Helm.Api
 {
-    public static class GetOperationResultExtentions
+    public static class GetOperationResultExtensions
     {
         public static IActionResult ToHttp<T>(this GetOperationResult<T> result, SuccessCodes code)
         {

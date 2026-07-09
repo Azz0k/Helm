@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Text;
 using Xunit;
 
-namespace Helm.Tests
+namespace Helm.Tests.ValidatorTests
 {
     public class EquipmentValidatorTests
     {
@@ -110,7 +110,7 @@ namespace Helm.Tests
             var result = issueEquipmentCommandValidator.TestValidate(command);
             result.ShouldHaveValidationErrorFor(x => x.Id);
         }
-        [Theory]
+        [Theory] 
         [InlineData(0)]
         [InlineData(-1)]
         public void IdMustBeInvalid_ReturnEquipmentCommand(int id)

@@ -8,7 +8,7 @@ using System.Xml.Linq;
 using Xunit;
 using static Helm.Core.Application.UserRoles.Commands.UpdateUserRole;
 
-namespace Helm.Tests
+namespace Helm.Tests.ValidatorTests
 {
     public class UserRolesValidatorsTests
     {

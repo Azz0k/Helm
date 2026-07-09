@@ -1,4 +1,5 @@
 ﻿using Helm.Api;
+using Helm.Core.Application.Equipment.EquipmentTemplate.Commands;
 using Helm.Core.Application.Equipment.EquipmentTemplate.Queries;
 using Helm.Core.Application.Users.Commands;
 using Helm.Core.Infrastructure.Contexts;
@@ -8,11 +9,12 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Testing.Platform.Extensions.TestFramework;
 using System.Net.Http.Json;
 using Xunit;
 
 
-namespace Helm.Tests
+namespace Helm.Tests.ApiTests
 {
     public class EquipmentTemplateApiTests : IClassFixture<NoAuthWebApplicationFactory<Program>>
     {
@@ -66,6 +68,31 @@ namespace Helm.Tests
         {
             List<EquipmentTemplateDTO>? getResponse = await GetAsync();
             Assert.NotNull(getResponse);
+        }
+        private async Task<HttpResponseMessage?> CreateAsync(string name, string description, string key)
+        {
+            CreateEquipmentTemplateCommand request = new () { Name = name, Description = description, RenderTemplateKey = key };
+            var response = await _client.PostAsJsonAsync(apiUri, request);
+            return response;
+        }
+        [Fact]
+        public async Task EquipmentTemplateApi_POST_HappyPath()
+        {
+            string name = Guid.NewGuid().ToString();
+            var response = await CreateAsync(name, name, name);
+            Assert.NotNull(response);
+            Assert.Equal(201, (int)response.StatusCode);
+        }
+        [Fact]
+        public async Task EquipmentTemplateApi_POST_DuplicateEntity_ReturnsConflict()
+        {
+            string name = Guid.NewGuid().ToString();
+            var response = await CreateAsync(name, name, name);
+            Assert.NotNull(response);
+            Assert.Equal(201, (int)response.StatusCode);
+            response = await CreateAsync(name, name, name);
+            Assert.NotNull(response);
+            Assert.Equal(409, (int)response.StatusCode);
         }
     }
 }
