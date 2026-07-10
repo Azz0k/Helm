@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Helm.Core.Domain.Entities;
+using Helm.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

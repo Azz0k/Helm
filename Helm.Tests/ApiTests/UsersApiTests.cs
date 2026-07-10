@@ -2,20 +2,13 @@
 using Helm.Core.Application.UserRoles.Queries;
 using Helm.Core.Application.Users.Commands;
 using Helm.Core.Application.Users.Queries;
-using Helm.Core.Domain.Entities;
 using Helm.Core.Infrastructure.Contexts;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Net;
 using System.Net.Http.Json;
-using System.Text;
-using System.Xml.Linq;
 using Xunit;
 
 namespace Helm.Tests.ApiTests

@@ -4,7 +4,7 @@ using FluentValidation.Validators;
 using Helm.Core.Application.Common;
 using Helm.Core.Application.Interfaces;
 using Helm.Core.Application.Users.Queries;
-using Helm.Core.Domain.Entities;
+using Helm.Domain.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;

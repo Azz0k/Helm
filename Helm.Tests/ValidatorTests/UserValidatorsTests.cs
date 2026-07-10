@@ -2,7 +2,7 @@
 using FluentValidation.TestHelper;
 using Helm.Core.Application.UserRoles.Commands;
 using Helm.Core.Application.Users.Commands;
-using Helm.Core.Domain.Constants;
+using Helm.Domain.Constants;
 using System;
 using System.Collections.Generic;
 using System.Text;

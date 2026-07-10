@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using Helm.Core.Domain.Constants;
+using Helm.Domain.Constants;
 
 namespace Helm.Core.Application.UserRoles.Commands
 {

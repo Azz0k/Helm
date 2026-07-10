@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Domain\Enums\" />
+    <ProjectReference Include="..\Helm.Domain\Helm.Domain.csproj" />
   </ItemGroup>
 
 </Project>

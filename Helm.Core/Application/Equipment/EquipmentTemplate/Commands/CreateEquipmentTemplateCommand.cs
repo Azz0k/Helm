@@ -3,7 +3,7 @@ using Helm.Core.Application.Common;
 using Helm.Core.Application.Equipment.Equipment.Queries;
 using Helm.Core.Application.Equipment.EquipmentTemplate.Queries;
 using Helm.Core.Application.Interfaces;
-using Helm.Core.Domain.Entities;
+using Helm.Domain.Entities;
 using MediatR;
 
 
@@ -44,7 +44,7 @@ namespace Helm.Core.Application.Equipment.EquipmentTemplate.Commands
             {
                 return new GetOperationResult<EquipmentTemplateDTO>.Conflict();
             }
-            Helm.Core.Domain.Entities.EquipmentTemplate newTemplate = new(user,request.Name, request.RenderTemplateKey, request.Description);
+            Domain.Entities.EquipmentTemplate newTemplate = new(user,request.Name, request.RenderTemplateKey, request.Description);
             EquipmentTemplateDTO dto = await equipmentTemplateRepository.AddEquipmentTemplateAsync(newTemplate, cancellationToken);
             return new GetOperationResult<EquipmentTemplateDTO>.Success(dto);
         }

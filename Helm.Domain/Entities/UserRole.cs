@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Helm.Core.Domain.Entities
+namespace Helm.Domain.Entities
 {
     public class UserRole
     {

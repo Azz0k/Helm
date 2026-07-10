@@ -1,5 +1,5 @@
 ﻿using Helm.Core.Application.Users.Queries;
-using Helm.Core.Domain.Entities;
+using Helm.Domain.Entities;
 
 namespace Helm.Core.Application.Interfaces
 {

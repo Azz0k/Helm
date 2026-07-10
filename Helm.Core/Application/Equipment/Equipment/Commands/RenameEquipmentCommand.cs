@@ -4,7 +4,7 @@ using FluentValidation;
 using Helm.Core.Application.Common;
 using Helm.Core.Application.Equipment.Equipment.Queries;
 using Helm.Core.Application.Interfaces;
-using Helm.Core.Domain.Entities;
+using Helm.Domain.Entities;
 using MediatR;
 
 namespace Helm.Core.Application.Equipment.Equipment.Commands
@@ -43,14 +43,14 @@ namespace Helm.Core.Application.Equipment.Equipment.Commands
             {
                 return new GetOperationResult<EquipmentDTO>.Unexpected();
             }
-            Helm.Core.Domain.Entities.Equipment? equipment = await equipmentRepository.FindEquipmentByIdAsync(request.Id, cancellationToken);
+            Domain.Entities.Equipment? equipment = await equipmentRepository.FindEquipmentByIdAsync(request.Id, cancellationToken);
             if (equipment == null)
             {
                 return new GetOperationResult<EquipmentDTO>.NotFound();
             }
             if (equipment.Name != request.Name)
             {
-                Helm.Core.Domain.Entities.Equipment? targetEquipment = await equipmentRepository.FindEquipmentByNameAsync(request.Name, cancellationToken);
+                Domain.Entities.Equipment? targetEquipment = await equipmentRepository.FindEquipmentByNameAsync(request.Name, cancellationToken);
                 if (targetEquipment !=null)
                 {
                     return new GetOperationResult<EquipmentDTO>.Conflict();

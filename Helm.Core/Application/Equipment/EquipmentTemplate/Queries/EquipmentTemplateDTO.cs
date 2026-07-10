@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Helm.Core.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -20,7 +19,7 @@ namespace Helm.Core.Application.Equipment.EquipmentTemplate.Queries
         {
             public Mapping()
             {
-                CreateMap<Helm.Core.Domain.Entities.EquipmentTemplate, EquipmentTemplateDTO>()
+                CreateMap<Domain.Entities.EquipmentTemplate, EquipmentTemplateDTO>()
                     .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => src.CreatedBy.Name))
                     .ForMember(dest => dest.LastModifiedBy, opt => opt.MapFrom(src => src.LastModifiedBy.Name));
             }

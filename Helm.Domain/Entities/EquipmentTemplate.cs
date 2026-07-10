@@ -1,4 +1,4 @@
-﻿namespace Helm.Core.Domain.Entities
+﻿namespace Helm.Domain.Entities
 {
     public class EquipmentTemplate
     {

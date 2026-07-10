@@ -1,6 +1,6 @@
 ﻿using Helm.Core.Application.UserRoles.Queries;
 using Helm.Core.Application.Users.Queries;
-using Helm.Core.Domain.Entities;
+using Helm.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Helm.Core.Domain.Constants
+namespace Helm.Domain.Constants
 {
     public static class UserConstants
     {

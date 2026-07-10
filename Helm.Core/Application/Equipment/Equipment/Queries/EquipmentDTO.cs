@@ -19,7 +19,7 @@ namespace Helm.Core.Application.Equipment.Equipment.Queries
         {
             public Mapping()
             {
-                CreateMap<Helm.Core.Domain.Entities.Equipment, EquipmentDTO>()
+                CreateMap<Domain.Entities.Equipment, EquipmentDTO>()
                     .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => src.CreatedBy.Name))
                     .ForMember(dest => dest.LastModifiedBy, opt => opt.MapFrom(src => src.LastModifiedBy.Name));
             }

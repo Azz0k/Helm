@@ -4,5 +4,6 @@
   </Folder>
   <Project Path="Helm.Api/Helm.Api.csproj" />
   <Project Path="Helm.Core/Helm.Core.csproj" Id="9d33ff09-e67f-4905-a5bf-b349fa7522ab" />
+  <Project Path="Helm.Domain/Helm.Domain.csproj" Id="f49cb68e-f6b8-495b-b80b-ccf356f9741d" />
   <Project Path="Helm.Tests/Helm.Tests.csproj" Id="7394d5a5-fb63-42a1-916b-ac6e8a122453" />
 </Solution>

@@ -1,12 +1,12 @@
 ﻿using Helm.Core.Application.Equipment.Equipment.Commands;
 using Helm.Core.Application.Equipment.EquipmentTemplate.Commands;
-using Helm.Core.Domain.Constants;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using Xunit;
 using FluentValidation;
 using FluentValidation.TestHelper;
+using Helm.Domain.Constants;
 
 
 namespace Helm.Tests.ValidatorTests

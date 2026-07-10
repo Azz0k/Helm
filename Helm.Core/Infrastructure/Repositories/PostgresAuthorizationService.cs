@@ -2,8 +2,8 @@
 using Helm.Core.Application.Common;
 using Helm.Core.Application.Interfaces;
 using Helm.Core.Application.UserRoles.Queries;
-using Helm.Core.Domain.Entities;
 using Helm.Core.Infrastructure.Contexts;
+using Helm.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

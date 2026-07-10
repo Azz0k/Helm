@@ -2,7 +2,7 @@
 using Helm.Core.Application.Common;
 using Helm.Core.Application.Equipment.Equipment.Queries;
 using Helm.Core.Application.Interfaces;
-using Helm.Core.Domain.Entities;
+using Helm.Domain.Entities;
 using MediatR;
 
 namespace Helm.Core.Application.Equipment.Equipment.Commands
@@ -39,7 +39,7 @@ namespace Helm.Core.Application.Equipment.Equipment.Commands
             {
                 return new GetOperationResult<EquipmentDTO>.Conflict();
             }
-            Helm.Core.Domain.Entities.Equipment newEquipment = new(user, request.Name, request.IsBulk);
+            Domain.Entities.Equipment newEquipment = new(user, request.Name, request.IsBulk);
             EquipmentDTO vm = await equipmentRepository.AddEquipmentAsync(newEquipment, cancellationToken);
             return new GetOperationResult<EquipmentDTO>.Success(vm);
         }

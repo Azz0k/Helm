@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using Helm.Core.Domain.Constants;
+using Helm.Domain.Constants;
 using System;
 using System.Collections.Generic;
 using System.Text;
