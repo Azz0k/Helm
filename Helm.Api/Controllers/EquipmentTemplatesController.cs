@@ -19,15 +19,15 @@ namespace Helm.Api.Controllers
             this.sender = sender;
         }
         [HttpGet]
-        public async Task<IActionResult> GetAllEquipmentTemplates()
+        public async Task<IActionResult> GetAllEquipmentTemplates(CancellationToken cancellationToken)
         {
-            var result = await sender.Send(new GetAllEquipmentTemplatesQuery());
+            var result = await sender.Send(new GetAllEquipmentTemplatesQuery(), cancellationToken);
             return result.ToHttp(SuccessCodes.Ok);
         }
         [HttpPost]
-        public async Task<IActionResult> CreatEquipmentTemplate([FromBody] CreateEquipmentTemplateCommand command)
+        public async Task<IActionResult> CreatEquipmentTemplate([FromBody] CreateEquipmentTemplateCommand command, CancellationToken cancellationToken)
         {
-            var result = await sender.Send(command);
+            var result = await sender.Send(command, cancellationToken);
             return result.ToHttp(SuccessCodes.Created);
         }
     }

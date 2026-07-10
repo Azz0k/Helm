@@ -51,7 +51,8 @@ namespace Helm.Domain.Entities
             if (IsLost) return;
             if (IsBulk) return;
             if (!IsIssued) return;
-            IsIssued = false; 
+            IsIssued = false;
+            IssuedBy = string.Empty;
             SetModified(user);
         }
         public void Lose(User user)

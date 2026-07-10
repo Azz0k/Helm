@@ -19,39 +19,39 @@ namespace Helm.Api.Controllers
             this.sender = sender;
         }
         [HttpGet]
-        public async Task<IActionResult> GetAllEquipment()
+        public async Task<IActionResult> GetAllEquipment(CancellationToken cancellationToken)
         {
-            var result = await sender.Send(new GetAllEquipmentQuery());
+            var result = await sender.Send(new GetAllEquipmentQuery(), cancellationToken);
             return result.ToHttp(SuccessCodes.Ok);
         }
         [HttpPost]
-        public async Task<IActionResult> CreateEquipment([FromBody] CreateEquipmentCommand command)
+        public async Task<IActionResult> CreateEquipment([FromBody] CreateEquipmentCommand command, CancellationToken cancellationToken)
         {
-            var result = await sender.Send(command);
+            var result = await sender.Send(command, cancellationToken);
             return result.ToHttp(SuccessCodes.Created);
         }
         [HttpPut]
-        public async Task<IActionResult> RenameEquipment([FromBody] RenameEquipmentCommand command)
+        public async Task<IActionResult> RenameEquipment([FromBody] RenameEquipmentCommand command, CancellationToken cancellationToken)
         {
-            var result = await sender.Send(command);
+            var result = await sender.Send(command, cancellationToken);
             return result.ToHttp(SuccessCodes.Ok);
         }
         [HttpPut("issue")]
-        public async Task<IActionResult> IssueEquipment([FromBody] IssueEquipmentCommand command)
+        public async Task<IActionResult> IssueEquipment([FromBody] IssueEquipmentCommand command, CancellationToken cancellationToken)
         {
-            var result = await sender.Send(command);
+            var result = await sender.Send(command, cancellationToken);
             return result.ToHttp(SuccessCodes.Ok);
         }
         [HttpPut("return")]
-        public async Task<IActionResult> ReturnEquipment([FromBody] ReturnEquipmentCommand command)
+        public async Task<IActionResult> ReturnEquipment([FromBody] ReturnEquipmentCommand command, CancellationToken cancellationToken)
         {
-            var result = await sender.Send(command);
+            var result = await sender.Send(command, cancellationToken);
             return result.ToHttp(SuccessCodes.Ok);
         }
         [HttpPut("lose")]
-        public async Task<IActionResult> LoseEquipment([FromBody] LoseEquipmentCommand command)
+        public async Task<IActionResult> LoseEquipment([FromBody] LoseEquipmentCommand command, CancellationToken cancellationToken)
         {
-            var result = await sender.Send(command);
+            var result = await sender.Send(command, cancellationToken);
             return result.ToHttp(SuccessCodes.Ok);
         }
     }

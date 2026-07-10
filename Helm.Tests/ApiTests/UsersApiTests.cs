@@ -77,7 +77,7 @@ namespace Helm.Tests.ApiTests
             var response = await CreateAsync(login, name);
             Assert.NotNull(response);
             Assert.Equal(201, (int)response.StatusCode);
-            var content = await response.Content.ReadFromJsonAsync<UserRoleDTO>();
+            var content = await response.Content.ReadFromJsonAsync<UserDTO>();
             Assert.NotNull(content);
             int originalId = content.Id;
             return content.Id;
@@ -184,7 +184,7 @@ namespace Helm.Tests.ApiTests
             Assert.Equal(204, (int)response.StatusCode);
             response = await DeleteAsync(originalId);
             Assert.NotNull(response);
-            Assert.Equal(204, (int)response.StatusCode);
+            Assert.Equal(404, (int)response.StatusCode);
             response = await DeleteAsync(int.MaxValue);
             Assert.NotNull(response);
             Assert.Equal(404, (int)response.StatusCode);

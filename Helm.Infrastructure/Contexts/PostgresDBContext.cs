@@ -43,6 +43,7 @@ namespace Helm.Infrastructure.Contexts
                 entity.Property(entity => entity.Enabled).IsRequired().HasDefaultValue(true);
                 entity.Property(entity => entity.Deleted).IsRequired().HasDefaultValue(false);
                 entity.HasMany(entity => entity.Roles).WithMany(r => r.Users);
+                entity.HasQueryFilter(u => !u.Deleted);
             });
             modelBuilder.Entity<UserRole>(entity =>
             {

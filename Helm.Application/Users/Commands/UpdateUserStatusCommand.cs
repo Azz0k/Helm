@@ -31,6 +31,7 @@ namespace Helm.Application.Users.Commands
                 return new GetOperationResult<UserDTO>.NotFound();
             }
             user.SetStatus(request.Enabled);
+            await userRepository.SaveChangesAsync(cancellationToken);
             UserDTO dto = mapper.Map<UserDTO>(user);
             return new GetOperationResult<UserDTO>.Success(dto);
         }

@@ -58,7 +58,7 @@ namespace Helm.Infrastructure.Repositories
 
         public async Task SaveAsync(CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            await dBContext.SaveChangesAsync();
         }
     }
 }

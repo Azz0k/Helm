@@ -32,7 +32,6 @@ namespace Helm.Infrastructure.Configuration
             public PropertiesValidator()
             {
                 RuleFor(s => s.ConnectionString).NotNull().NotEmpty();
-                RuleFor(s => s.JWTSecretCode).NotNull().NotEmpty();
                 RuleFor(s => s.MediatRLicense).NotNull().NotEmpty();
                 RuleFor(s => s.AllowedOrigins).NotNull().NotEmpty();
                 RuleFor(s => s.ADFS).NotNull().DependentRules(() =>

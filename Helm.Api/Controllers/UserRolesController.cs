@@ -20,27 +20,27 @@ namespace Helm.Api.Controllers
             this.sender = sender;
         }
         [HttpGet]
-        public async Task<IActionResult> GetAllUserRoles()
+        public async Task<IActionResult> GetAllUserRoles(CancellationToken cancellationToken)
         {
-            var result = await sender.Send(new GetAllUserRolesQuery());
+            var result = await sender.Send(new GetAllUserRolesQuery(), cancellationToken);
             return result.ToHttp(SuccessCodes.Ok);
         }
         [HttpPost]
-        public async Task<IActionResult> CreateRole([FromBody] CreateUserRoleCommand command)
+        public async Task<IActionResult> CreateRole([FromBody] CreateUserRoleCommand command, CancellationToken cancellationToken)
         {
-            var result = await sender.Send(command);
+            var result = await sender.Send(command, cancellationToken);
             return result.ToHttp(SuccessCodes.Created);
         }
         [HttpPut]
-        public async Task<IActionResult> UpdateRole([FromBody] UpdateUserRoleCommand command)
+        public async Task<IActionResult> UpdateRole([FromBody] UpdateUserRoleCommand command, CancellationToken cancellationToken)
         {
-            var result = await sender.Send(command);
+            var result = await sender.Send(command, cancellationToken);
             return result.ToHttp(SuccessCodes.Ok);
         }
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRole(int id)
+        public async Task<IActionResult> DeleteRole(int id, CancellationToken cancellationToken)
         {
-            var result = await sender.Send(new DeleteUserRoleCommand() { Id = id});
+            var result = await sender.Send(new DeleteUserRoleCommand() { Id = id}, cancellationToken);
             return result.ToHttp(SuccessCodes.NoContent);
         }
     }
