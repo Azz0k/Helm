@@ -13,26 +13,24 @@ using System.Text;
 namespace Helm.Core.Application.UserRoles.Commands
 {
     [RequireRole("UserRoleManager")]
-    public record DeleteUserRoleCommand : IRequest<GetOperationResult<object>>
+    public record DeleteUserRoleCommand : IRequest<GetOperationResult<UserRoleDTO>>
     {
         public required int Id { get; set; }
     }
-    public class DeleteUserRole : IRequestHandler<DeleteUserRoleCommand, GetOperationResult<object>>
+    public class DeleteUserRole : IRequestHandler<DeleteUserRoleCommand, GetOperationResult<UserRoleDTO>>
     {
         private IUserRoleRepository userRoleRepository;
-        private readonly IValidator<DeleteUserRoleCommand> validator;
-        public DeleteUserRole(IUserRoleRepository userRoleRepository, IValidator<DeleteUserRoleCommand> validator)
+        public DeleteUserRole(IUserRoleRepository userRoleRepository)
         {
             this.userRoleRepository = userRoleRepository;
-            this.validator = validator;
         }
-        public async Task<GetOperationResult<object>> Handle(DeleteUserRoleCommand command, CancellationToken cancellationToken)
+        public async Task<GetOperationResult<UserRoleDTO>> Handle(DeleteUserRoleCommand command, CancellationToken cancellationToken)
         {
             if (await userRoleRepository.DeleteByIdAsync(command.Id, cancellationToken))
             {
-                return new GetOperationResult<object>.Success(new Object());
+                return new GetOperationResult<UserRoleDTO>.Success(null);
             }
-            return new GetOperationResult<object>.NotFound();
+            return new GetOperationResult<UserRoleDTO>.NotFound();
         }
     }
 }

@@ -22,14 +22,12 @@ namespace Helm.Core.Application.Equipment.Equipment.Commands
         private readonly IEquipmentRepository equipmentRepository;
         private readonly IUserRepository userRepository;
         private readonly IUserContext userContext;
-        private readonly IValidator<RenameEquipmentCommand> validator;
         private readonly IMapper mapper;
-        public IssueEquipmentCommandHandler(IEquipmentRepository equipmentRepository, IUserRepository userRepository, IUserContext userContext, IValidator<RenameEquipmentCommand> validator, IMapper mapper)
+        public IssueEquipmentCommandHandler(IEquipmentRepository equipmentRepository, IUserRepository userRepository, IUserContext userContext, IMapper mapper)
         {
             this.equipmentRepository = equipmentRepository;
             this.userRepository = userRepository;
             this.userContext = userContext;
-            this.validator = validator;
             this.mapper = mapper;
         }
 

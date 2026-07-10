@@ -1,4 +1,6 @@
-﻿using FluentValidation;
+﻿using AutoMapper;
+using FluentValidation;
+using FluentValidation.Validators;
 using Helm.Core.Application.Common;
 using Helm.Core.Application.Interfaces;
 using Helm.Core.Application.Users.Queries;
@@ -14,18 +16,17 @@ namespace Helm.Core.Application.Users.Commands
     public record UpdateUserCommand : IRequest<GetOperationResult<UserDTO>>
     {
         public int Id { get; set; }
-        public string? Login { get; set; }
-        public  string? Name { get; set; }
-        public string? ADLogin { get; set; }
+        public required string Login { get; set; }
+        public required string Name { get; set; }
     }
     public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, GetOperationResult<UserDTO>>
     {
         private IUserRepository userRepository;
-        private IValidator<UpdateUserCommand> validator;
-        public UpdateUserHandler(IUserRepository userRepository, IValidator<UpdateUserCommand> validator) 
+        private IMapper mapper;
+        public UpdateUserHandler(IUserRepository userRepository, IMapper mapper) 
         { 
             this.userRepository = userRepository;
-            this.validator = validator;
+            this.mapper = mapper;
         }
         public async Task<GetOperationResult<UserDTO>> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
@@ -34,20 +35,22 @@ namespace Helm.Core.Application.Users.Commands
             {
                 return new GetOperationResult<UserDTO>.NotFound();
             }
-
-            if (request.Login != null)
+            string newLogin = request.Login.ToLower();
+            if (newLogin != user.Login)
             {
-                user.Login = request.Login.ToLower();
+                User? targetUser = await userRepository.FindUserByLoginAsync(newLogin, cancellationToken);
+                if (targetUser == null)
+                {
+                    user.ChangeLogin(newLogin);
+                }
+                else
+                {
+                    return new GetOperationResult<UserDTO>.Conflict();
+                }
             }
-            if (request.Name != null)
-            {
-                user.Name = request.Name;
-            }
-            if (request.ADLogin != null)
-            {
-                user.ADLogin = request.ADLogin;
-            }
-            var dto = await userRepository.UpdateUserAsync(user, cancellationToken);
+            user.Rename(request.Name);
+            await userRepository.SaveChangesAsync(cancellationToken);
+            UserDTO dto = mapper.Map<UserDTO>(user);
             return new GetOperationResult<UserDTO>.Success(dto);
         }
     }

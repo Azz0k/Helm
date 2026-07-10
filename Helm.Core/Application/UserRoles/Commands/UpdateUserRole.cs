@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using AutoMapper;
+using FluentValidation;
 using Helm.Core.Application.Common;
 using Helm.Core.Application.Interfaces;
 using Helm.Core.Application.UserRoles.Queries;
@@ -23,26 +24,35 @@ namespace Helm.Core.Application.UserRoles.Commands
         public class UpdateUserRoleHandler : IRequestHandler<UpdateUserRoleCommand, GetOperationResult<UserRoleDTO>>
         {
             private IUserRoleRepository userRoleRepository;
-            private readonly IValidator<UpdateUserRoleCommand> validator;
-            public UpdateUserRoleHandler(IUserRoleRepository userRoleRepository, IValidator<UpdateUserRoleCommand> validator)
+            private IMapper mapper;
+            public UpdateUserRoleHandler(IUserRoleRepository userRoleRepository, IMapper mapper)
             {
+                this.mapper = mapper;   
                 this.userRoleRepository = userRoleRepository;
-                this.validator = validator;
             }
             public async Task<GetOperationResult<UserRoleDTO>> Handle(UpdateUserRoleCommand command, CancellationToken cancellationToken)
             {
-                var entity = new UserRole
-                {
-                    Id = command.Id,
-                    Name = command.Name,
-                    Description = command.Description,
-                };
-                UserRoleDTO? vm = await userRoleRepository.UpdateRoleAsync(entity, cancellationToken);
-                if (vm == null)
+                UserRole? currentRole = await userRoleRepository.FindByIdAsync(command.Id);
+                if (currentRole == null)
                 {
                     return new GetOperationResult<UserRoleDTO>.NotFound();
                 }
-                return new GetOperationResult<UserRoleDTO>.Success(vm);
+                if (command.Name != currentRole.Name)
+                {
+                    UserRole? targetRole = await userRoleRepository.FindByNameAsync(command.Name, cancellationToken);
+                    if (targetRole != null)
+                    {
+                        return new GetOperationResult<UserRoleDTO>.Conflict();
+                    }
+                    currentRole.Rename(command.Name);
+                }
+                if (command.Description != null)
+                {
+                    currentRole.ChangeDescription(command.Description);
+                }
+                await userRoleRepository.SaveChangesAsync(cancellationToken);
+                UserRoleDTO dto = mapper.Map<UserRoleDTO>(currentRole);
+                return new GetOperationResult<UserRoleDTO>.Success(dto);
             }
         }
     }

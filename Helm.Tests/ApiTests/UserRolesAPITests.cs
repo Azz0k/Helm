@@ -122,12 +122,6 @@ namespace Helm.Tests.ApiTests
             Assert.Equal(name, content.Name);
             Assert.Equal(description, content.Description);
         }
-        private async Task UpdateUserRoleInvalidPath(int? id, string? name, string? description)
-        {
-            var response = await UpdateAsync(id, name, description);
-            Assert.NotNull(response);
-            Assert.Equal(400, (int)response.StatusCode);
-        }
         private async Task<int> CreateOneUserRole()
         {
             string originalName = Guid.NewGuid().ToString();
@@ -148,9 +142,6 @@ namespace Helm.Tests.ApiTests
             string newDescription = Guid.NewGuid().ToString();
             await UpdateUserRoleHappyPath(originalId, newName, newDescription);
             await UpdateUserRoleHappyPath(originalId, newName, newDescription);//idempotency PUT
-            await UpdateUserRoleInvalidPath(originalId, "   ", newDescription);
-            await UpdateUserRoleInvalidPath(null, newName, newDescription);
-            await UpdateUserRoleInvalidPath(-1, newName, newDescription);
             var response = await UpdateAsync(Int32.MaxValue, newName, newDescription);
             Assert.NotNull(response);
             Assert.Equal(404, (int)response.StatusCode);

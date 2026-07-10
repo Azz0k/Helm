@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using AutoMapper;
+using FluentValidation;
 using Helm.Core.Application.Common;
 using Helm.Core.Application.Interfaces;
 using Helm.Core.Application.UserRoles.Queries;
@@ -20,25 +21,24 @@ namespace Helm.Core.Application.UserRoles.Commands
     public class CreateUserRoleHandler : IRequestHandler<CreateUserRoleCommand, GetOperationResult<UserRoleDTO>>
     {
         private IUserRoleRepository userRoleRepository;
-        private readonly IValidator<CreateUserRoleCommand> validator;
-        public CreateUserRoleHandler(IUserRoleRepository userRoleRepository, IValidator<CreateUserRoleCommand> validator)
+        private IMapper mapper;
+        public CreateUserRoleHandler(IUserRoleRepository userRoleRepository, IMapper mapper)
         {
             this.userRoleRepository = userRoleRepository;
-            this.validator = validator;
+            this.mapper = mapper;
         }
         public async Task<GetOperationResult<UserRoleDTO>> Handle(CreateUserRoleCommand command, CancellationToken cancellationToken)
         {
-            if (await userRoleRepository.FindByNameAsync(command.Name, cancellationToken))
+            UserRole? role = await userRoleRepository.FindByNameAsync(command.Name, cancellationToken);
+            if (role != null)
             {
                 return new GetOperationResult<UserRoleDTO>.Conflict();
             }
-            var entity = new UserRole
-            {
-                Name = command.Name,
-                Description = command.Description,
-            };
-            UserRoleDTO vm = await userRoleRepository.AddRoleAsync(entity, cancellationToken);
-            return new GetOperationResult<UserRoleDTO>.Success(vm);
+            var entity = new UserRole(command.Name, command.Description);
+            await userRoleRepository.AddRoleAsync(entity);
+            await userRoleRepository.SaveChangesAsync(cancellationToken);
+            UserRoleDTO dto = mapper.Map<UserRoleDTO>(entity);
+            return new GetOperationResult<UserRoleDTO>.Success(dto);
         }
     }
 }

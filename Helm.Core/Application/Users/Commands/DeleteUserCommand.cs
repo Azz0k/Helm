@@ -11,27 +11,28 @@ using System.Text;
 namespace Helm.Core.Application.Users.Commands
 {
     [RequireRole("UserManager")]
-    public record DeleteUserCommand : IRequest<GetOperationResult<object>>
+    public record DeleteUserCommand : IRequest<GetOperationResult<UserDTO>>
     {
         public required int Id { get; set; }
     }
-    public class DeleteUserHandler : IRequestHandler<DeleteUserCommand, GetOperationResult<object>>
+    public class DeleteUserHandler : IRequestHandler<DeleteUserCommand, GetOperationResult<UserDTO>>
     {
         private IUserRepository userRepository;
-        private readonly IValidator<CreateUserCommand> validator;
-        public DeleteUserHandler(IUserRepository userRepository,  IValidator<CreateUserCommand> validator)
+        public DeleteUserHandler(IUserRepository userRepository)
         {
             this.userRepository = userRepository;
-            this.validator = validator;
         }
 
-        public async Task<GetOperationResult<object>> Handle(DeleteUserCommand command, CancellationToken cancellationToken)
+        public async Task<GetOperationResult<UserDTO>> Handle(DeleteUserCommand command, CancellationToken cancellationToken)
         {
-            if (await userRepository.DeleteUserAsync(command.Id, cancellationToken))
+            User? user = await userRepository.FindUserByIdAysnc(command.Id, cancellationToken);
+            if (user == null)
             {
-                return new GetOperationResult<object>.Success(new Object());
+                return new GetOperationResult<UserDTO>.NotFound();
             }
-            return new GetOperationResult<object>.NotFound();
+            user.Delete();
+            await userRepository.SaveChangesAsync(cancellationToken);
+            return new GetOperationResult<UserDTO>.Success(null);
         }
     }
 }

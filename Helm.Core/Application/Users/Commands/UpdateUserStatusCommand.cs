@@ -1,12 +1,10 @@
-﻿using FluentValidation;
+﻿using AutoMapper;
 using Helm.Core.Application.Common;
 using Helm.Core.Application.Interfaces;
 using Helm.Core.Application.Users.Queries;
 using Helm.Core.Domain.Entities;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
+
 
 namespace Helm.Core.Application.Users.Commands
 {
@@ -19,11 +17,11 @@ namespace Helm.Core.Application.Users.Commands
     public class UpdateUserStatusCommandHandler : IRequestHandler<UpdateUserStatusCommand, GetOperationResult<UserDTO>>
     {
         private IUserRepository userRepository;
-        private IValidator<UpdateUserStatusCommand> validator;
-        public UpdateUserStatusCommandHandler (IUserRepository userRepository, IValidator<UpdateUserStatusCommand> validator)
+        private IMapper mapper;
+        public UpdateUserStatusCommandHandler (IUserRepository userRepository, IMapper mapper)
         {
             this.userRepository = userRepository;
-            this.validator = validator;
+            this.mapper = mapper;
         }
         public async Task<GetOperationResult<UserDTO>> Handle(UpdateUserStatusCommand request, CancellationToken cancellationToken)
         {
@@ -32,8 +30,8 @@ namespace Helm.Core.Application.Users.Commands
             {
                 return new GetOperationResult<UserDTO>.NotFound();
             }
-            user.Enabled = request.Enabled;
-            UserDTO dto = await userRepository.UpdateUserAsync(user, cancellationToken);
+            user.SetStatus(request.Enabled);
+            UserDTO dto = mapper.Map<UserDTO>(user);
             return new GetOperationResult<UserDTO>.Success(dto);
         }
     }

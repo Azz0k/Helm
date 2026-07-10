@@ -53,7 +53,7 @@ namespace Helm.Core.Infrastructure.Repositories
         }
         public async Task<bool> IsEquipmentExistsAsync(int id, CancellationToken cancellationToken)
         {
-            return await dBContext.Equipment.FindAsync(id, cancellationToken) != null;
+            return await dBContext.Equipment.FindAsync(id) != null;
         }
     }
 }

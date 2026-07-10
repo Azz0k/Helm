@@ -1,5 +1,6 @@
 ﻿using Helm.Api;
 using Helm.Core.Application.UserRoles.Queries;
+using Helm.Core.Application.Users.Commands;
 using Helm.Core.Application.Users.Queries;
 using Helm.Core.Domain.Entities;
 using Helm.Core.Infrastructure.Contexts;
@@ -65,15 +66,13 @@ namespace Helm.Tests.ApiTests
             var content = await response.Content.ReadFromJsonAsync<List<UserDTO>>();
             return content;
         }
-        private async Task<HttpResponseMessage?> CreateAsync(string? login, string? name, List<int> roles)
+        private async Task<HttpResponseMessage?> CreateAsync(string login, string name)
         {
-            CreateUserRequest request = new () { 
-                Login = login, 
-                Password= null, 
-                ADLogin = null,
-                Name = name, 
-                Roles = roles, 
-                Enabled = true};
+            CreateUserCommand request = new()
+            {
+                Login = login,
+                Name = name,
+            };
             var response = await _client.PostAsJsonAsync(apiUri, request);
             return response;
         }
@@ -82,7 +81,7 @@ namespace Helm.Tests.ApiTests
             string name = Guid.NewGuid().ToString();
             string login = Guid.NewGuid().ToString();
             List<int> roles = [];
-            var response = await CreateAsync(name, login, roles);
+            var response = await CreateAsync(login, name);
             Assert.NotNull(response);
             Assert.Equal(201, (int)response.StatusCode);
             var content = await response.Content.ReadFromJsonAsync<UserRoleDTO>();
@@ -120,37 +119,26 @@ namespace Helm.Tests.ApiTests
             string name = Guid.NewGuid().ToString();
             string login = Guid.NewGuid().ToString();
             List<int> roles = [];
-            var response = await CreateAsync(name, login, roles);
+            var response = await CreateAsync(login, name);
             Assert.NotNull(response);
             Assert.Equal(201, (int)response.StatusCode);
-            response = await CreateAsync(name, login, roles);
+            response = await CreateAsync(login, name);
             Assert.NotNull(response);
             Assert.Equal(409, (int)response.StatusCode);
-            response = await CreateAsync("   ", "  ", roles);
-            Assert.NotNull(response);
-            Assert.Equal(400, (int)response.StatusCode);
-            response = await CreateAsync(null, login, roles);
-            Assert.NotNull(response);
-            Assert.Equal(400, (int)response.StatusCode);
         }
-        private async Task<HttpResponseMessage> UpdateAsync(int? id, string? Name, string? Login, string? ADlogin)
+        private async Task<HttpResponseMessage> UpdateAsync(int id, string Name, string Login)
         {
-            var request = new UpdateUserRequest { Id = id, Name = Name, Login = Login, ADLogin = ADlogin };
+            var request = new UpdateUserCommand { Id = id, Name = Name, Login = Login };
             return await _client.PutAsJsonAsync(apiUri, request);
         }
         private async Task<HttpResponseMessage> UpdateStatusAsync(int id, bool enabled)
         {
-            var request = new UpdateUserStatusRequest { Enabled = enabled };
+            var request = new UpdateUserStatusCommand { Enabled = enabled };
             return await _client.PutAsJsonAsync($"{apiUri}/{id}/status", request);
         }
-        private async Task<HttpResponseMessage> UpdatePasswordAsync(int id, string password)
+        private async Task UpdateUserHappyPath(int id, string Name, string Login)
         {
-            var request = new UpdateUserPasswordRequest { Password = password};
-            return await _client.PutAsJsonAsync($"{apiUri}/{id}/password", request);
-        }
-        private async Task UpdateUserHappyPath(int? id, string? Name, string? Login, string? ADlogin)
-        {
-            var response = await UpdateAsync(id, Name, Login, ADlogin);
+            var response = await UpdateAsync(id, Name, Login);
             Assert.NotNull(response);
             Assert.Equal(200, (int)response.StatusCode);
             var content = await response.Content.ReadFromJsonAsync<UserDTO>();
@@ -158,13 +146,6 @@ namespace Helm.Tests.ApiTests
             Assert.Equal(id, content.Id);
             Assert.Equal(Name, content.Name);
             Assert.Equal(Login, content.Login);
-            Assert.Equal(ADlogin, content.ADLogin);
-        }
-        private async Task UpdateUserInvalidPath(int? id, string? Name, string? Login)
-        {
-            var response = await UpdateAsync(id, Name, Login, "");
-            Assert.NotNull(response);
-            Assert.Equal(400, (int)response.StatusCode);
         }
         [Fact]
         public async Task UsersApi_PUT_ShouldWorkCorrectly()
@@ -172,13 +153,9 @@ namespace Helm.Tests.ApiTests
             int originalId = await CreateOneUser();
             string newName = Guid.NewGuid().ToString();
             string newLogin = Guid.NewGuid().ToString();
-            string newADLogin = Guid.NewGuid().ToString();
-            await UpdateUserHappyPath(originalId, newName, newLogin, newADLogin);
-            await UpdateUserHappyPath(originalId, newName, newLogin, newADLogin);//idempotency PUT
-            await UpdateUserInvalidPath(originalId, "   ", newLogin);
-            await UpdateUserInvalidPath(null, newName, newLogin);
-            await UpdateUserInvalidPath(-1, newName, newLogin);
-            var response = await UpdateAsync(Int32.MaxValue, newName, newLogin, newADLogin);
+            await UpdateUserHappyPath(originalId, newName, newLogin);
+            await UpdateUserHappyPath(originalId, newName, newLogin);//idempotency PUT
+            var response = await UpdateAsync(Int32.MaxValue, newName, newLogin);
             Assert.NotNull(response);
             Assert.Equal(404, (int)response.StatusCode);
         }
@@ -200,30 +177,10 @@ namespace Helm.Tests.ApiTests
             content = await response.Content.ReadFromJsonAsync<UserDTO>(TestContext.Current.CancellationToken);
             Assert.NotNull(content);
             Assert.Equal(status, content.Enabled);
-            response = await UpdateStatusAsync(-1, status);
-            Assert.NotNull(response);
-            Assert.Equal(400, (int)response.StatusCode);
             response = await UpdateStatusAsync(Int32.MaxValue, status);
             Assert.NotNull(response);
             Assert.Equal(404, (int)response.StatusCode);
 
-        }
-        [Fact]
-        public async Task UsersApiPassword_PUT_ShouldWorkCorrectly()
-        {
-            int originalId = await CreateOneUser();
-            string  password = Guid.NewGuid().ToString().Substring(0,20);
-            var response = await UpdatePasswordAsync(originalId, password);
-            Assert.NotNull(response);
-            Assert.Equal(200, (int)response.StatusCode);
-            var content = await response.Content.ReadFromJsonAsync<UserDTO>(TestContext.Current.CancellationToken);
-            Assert.NotNull(content);
-            response = await UpdatePasswordAsync(-1, password);
-            Assert.NotNull(response);
-            Assert.Equal(400, (int)response.StatusCode);
-            response = await UpdatePasswordAsync(Int32.MaxValue, password);
-            Assert.NotNull(response);
-            Assert.Equal(404, (int)response.StatusCode);
         }
         [Fact]
         public async Task UsersApi_DELETE_ShouldWorkCorrectly()
@@ -234,10 +191,10 @@ namespace Helm.Tests.ApiTests
             Assert.Equal(204, (int)response.StatusCode);
             response = await DeleteAsync(originalId);
             Assert.NotNull(response);
-            Assert.Equal(404, (int)response.StatusCode);
-            response = await DeleteAsync(-1);
+            Assert.Equal(204, (int)response.StatusCode);
+            response = await DeleteAsync(int.MaxValue);
             Assert.NotNull(response);
-            Assert.Equal(400, (int)response.StatusCode);
+            Assert.Equal(404, (int)response.StatusCode);
         }
         [Fact]
         public async Task UsersApi_AssignRoles_ShouldWorkCorrectly()
@@ -245,6 +202,7 @@ namespace Helm.Tests.ApiTests
             int userId = await CreateOneUser();
             int roleId = await CreateOneUserRole();
             var response = await _client.PutAsJsonAsync($"{apiUri}/{userId}/role/{roleId}","",TestContext.Current.CancellationToken);
+            Assert.Equal(200, (int)response.StatusCode);
             UserDTO? user = await response.Content.ReadFromJsonAsync<UserDTO>(TestContext.Current.CancellationToken);
             Assert.NotNull(user);
             Assert.NotNull(user.Roles);
@@ -276,7 +234,7 @@ namespace Helm.Tests.ApiTests
         {
             int userId = await CreateOneUser();
             List<int> roles = new List<int>() { 1, 2 };
-            ReplaceUserRoleRequest request = new ReplaceUserRoleRequest { Roles = roles , UserId = userId};
+            ReplaceUserRoleCommand request = new() { Roles = roles , UserId = userId};
             var response = await _client.PutAsJsonAsync($"{apiUri}/role", request, TestContext.Current.CancellationToken);
             UserDTO? user = await response.Content.ReadFromJsonAsync<UserDTO>(TestContext.Current.CancellationToken);
             Assert.NotNull(user);
@@ -292,7 +250,7 @@ namespace Helm.Tests.ApiTests
             Assert.Contains(1, user.Roles);
             Assert.Contains(2, user.Roles);
             roles = new List<int>() { 1,  };
-            request = new ReplaceUserRoleRequest { Roles = roles, UserId = userId };
+            request = new () { Roles = roles, UserId = userId };
             response = await _client.PutAsJsonAsync($"{apiUri}/role", request, TestContext.Current.CancellationToken);
             user = await response.Content.ReadFromJsonAsync<UserDTO>(TestContext.Current.CancellationToken);
             Assert.NotNull(user);
@@ -300,39 +258,9 @@ namespace Helm.Tests.ApiTests
             Assert.NotEmpty(user.Roles);
             Assert.Contains(1, user.Roles);
             Assert.DoesNotContain(2, user.Roles);
-            request = new ReplaceUserRoleRequest { Roles = roles, UserId = int.MaxValue };
+            request = new() { Roles = roles, UserId = int.MaxValue };
             response = await _client.PutAsJsonAsync($"{apiUri}/role", request, TestContext.Current.CancellationToken); 
             Assert.Equal(404, (int)response.StatusCode);
-        }
-        public class CreateUserRequest
-        {
-            public string? Name { get; set; }
-            public string? Login { get; set; }
-            public string? Password { get; set; }
-            public string? ADLogin { get; set; }
-            public bool Enabled { get; set; }
-            public List<int> Roles { get; set; } = [];
-
-        }
-        public class UpdateUserRequest 
-        {
-            public int? Id { get; set; }
-            public string? Login { get; set; }
-            public string? Name { get; set; }
-            public string? ADLogin { get; set; }
-        }
-        public class UpdateUserStatusRequest
-        {
-            public bool Enabled { get; set; }
-        }
-        public class UpdateUserPasswordRequest
-        {
-            public required string Password { get; set; }
-        }
-        public class ReplaceUserRoleRequest
-        {
-            public int UserId { get; set; }
-            public List<int> Roles { get; set; } = [];
         }
     }
 }

@@ -17,7 +17,6 @@ namespace Helm.Tests.ValidatorTests
         private DeleteUserCommandValidator deleteUserCommandValidator = new();
         private RemoveUserRoleCommandValidator removeUserRoleCommandValidator = new();
         private UpdateUserCommandValidator updateUserCommandValidator = new();
-        private UpdateUserPasswordCommandValidator updateUserPasswordCommandValidator = new();
         private UpdateUserStatusCommandValidator updateUserStatusCommandValidator = new();
         private ReplaceUserRoleCommandValidator replaceUserRoleCommandValidator = new();
         public UserValidatorsTests() { }
@@ -25,10 +24,7 @@ namespace Helm.Tests.ValidatorTests
         {
             return new CreateUserCommand() { 
                 Login = new string('a', UserConstants.LoginMaxLength),
-                ADLogin = new string('a', UserConstants.LoginMaxLength),
                 Name = new string('a', UserConstants.NameMaxLength),
-                Password = new string('a', UserConstants.PasswordMaxLength),
-                Roles = [1, 2, 3]
             };
         }
         private AssignUserRoleCommand GenerateValidAssignUserRoleCommand()
@@ -59,17 +55,8 @@ namespace Helm.Tests.ValidatorTests
             return new UpdateUserCommand()
             {
                 Login = new string('a', UserConstants.LoginMaxLength),
-                ADLogin = new string('a', UserConstants.LoginMaxLength),
                 Name = new string('a', UserConstants.NameMaxLength),
                 Id = 1,
-            };
-        }
-        private UpdateUserPasswordCommand GenerateValidUpdateUserPasswordCommand()
-        {
-            return new UpdateUserPasswordCommand()
-            {
-                Id = 1,
-                Password = new string('a', UserConstants.PasswordMaxLength),
             };
         }
         private UpdateUserStatusCommand GenerateValidUpdateUserStatusCommand()
@@ -130,44 +117,6 @@ namespace Helm.Tests.ValidatorTests
             command.Name = name;
             var result = createUserCommandValidator.TestValidate(command);
             result.ShouldHaveValidationErrorFor(x => x.Name);
-        }
-        [Theory]
-        [InlineData(" ")]
-        [InlineData("")]
-        [InlineData("\t")]
-        [InlineData("\r")]
-        [InlineData("\n")]
-        [InlineData("Lorem1ipsum2dolor3sit4amet56consectetuer7adipiscingLorem1ipsum2dolor3sit4amet56consectetuer7adipiscinLorem1ipsum2dolor3sit4amet56consectetuer7adipiscingLorem1ipsum2dolor3sit4amet56consectetuer7adipisci")]//too long
-        [InlineData(" test ")]
-        [InlineData(" test")]
-        [InlineData("test ")]
-        public void ADLoginMustBeInvalid_CreateUserCommand(string adlogin)
-        {
-            var command = GenerateValidCreateUserCommand();
-            command.ADLogin = adlogin;
-            var result = createUserCommandValidator.TestValidate(command);
-            result.ShouldHaveValidationErrorFor(x => x.ADLogin);
-        }
-        [Theory]
-        [InlineData("")]
-        [InlineData("Lorem1ipsum2dolor3sit4amet")]//too long
-        [InlineData("1234567")]//too short
-        public void PasswordMustBeInvalid_CreateUserCommand(string password)
-        {
-            var command = GenerateValidCreateUserCommand();
-            command.Password = password;
-            var result = createUserCommandValidator.TestValidate(command);
-            result.ShouldHaveValidationErrorFor(x => x.Password);
-        }
-        [Theory]
-        [InlineData(0)]
-        [InlineData(-1)]
-        public void RolesMustContainOnlyPositiveIds_CreateUserCommand(int roleId)
-        {
-            var command = GenerateValidCreateUserCommand();
-            command.Roles.Add(roleId);
-            var result = createUserCommandValidator.TestValidate(command);
-            result.ShouldHaveValidationErrorFor(x => x.Roles);
         }
         [Fact]
         public void HappyPath_AssignUserRoleCommand()
@@ -305,23 +254,6 @@ namespace Helm.Tests.ValidatorTests
             result.ShouldHaveValidationErrorFor(x => x.Name);
         }
         [Theory]
-        [InlineData(" ")]
-        [InlineData("")]
-        [InlineData("\t")]
-        [InlineData("\r")]
-        [InlineData("\n")]
-        [InlineData("Lorem1ipsum2dolor3sit4amet56consectetuer7adipiscingLorem1ipsum2dolor3sit4amet56consectetuer7adipiscinLorem1ipsum2dolor3sit4amet56consectetuer7adipiscingLorem1ipsum2dolor3sit4amet56consectetuer7adipisci")]//too long
-        [InlineData(" test ")]
-        [InlineData(" test")]
-        [InlineData("test ")]
-        public void ADLoginMustBeInvalid_UpdateUserCommand(string adlogin)
-        {
-            var command = GenerateValidUpdateUserCommand();
-            command.ADLogin = adlogin;
-            var result = updateUserCommandValidator.TestValidate(command);
-            result.ShouldHaveValidationErrorFor(x => x.ADLogin);
-        }
-        [Theory]
         [InlineData(0)]
         [InlineData(-1)]
         public void UsersMustContainOnlyPositiveIds_UpdateUserCommand(int userId)
@@ -329,34 +261,6 @@ namespace Helm.Tests.ValidatorTests
             var command = GenerateValidUpdateUserCommand();
             command.Id = userId;
             var result = updateUserCommandValidator.TestValidate(command);
-            result.ShouldHaveValidationErrorFor(x => x.Id);
-        }
-        [Fact]
-        public void HappyPath_UpdateUserPasswordCommand()
-        {
-            var command = GenerateValidUpdateUserPasswordCommand();
-            var result = updateUserPasswordCommandValidator.TestValidate(command);
-            result.ShouldNotHaveAnyValidationErrors();
-        }
-        [Theory]
-        [InlineData("")]
-        [InlineData("Lorem1ipsum2dolor3sit4amet")]//too long
-        [InlineData("1234567")]//too short
-        public void PasswordMustBeInvalid_UpdateUserPasswordCommand(string password)
-        {
-            var command = GenerateValidUpdateUserPasswordCommand();
-            command.Password = password;
-            var result = updateUserPasswordCommandValidator.TestValidate(command);
-            result.ShouldHaveValidationErrorFor(x => x.Password);
-        }
-        [Theory]
-        [InlineData(0)]
-        [InlineData(-1)]
-        public void UsersMustContainOnlyPositiveIds_UpdateUserPasswordCommand(int userId)
-        {
-            var command = GenerateValidUpdateUserPasswordCommand();
-            command.Id = userId;
-            var result = updateUserPasswordCommandValidator.TestValidate(command);
             result.ShouldHaveValidationErrorFor(x => x.Id);
         }
         [Fact]

@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using AutoMapper;
+using FluentValidation;
 using Helm.Core.Application.Common;
 using Helm.Core.Application.Interfaces;
 using Helm.Core.Application.Users.Queries;
@@ -20,12 +21,12 @@ namespace Helm.Core.Application.Users.Commands
     {
         private IUserRepository userRepository;
         private IUserRoleRepository roleRepository;
-        private IValidator<AssignUserRoleCommand> validator;
-        public AssignUserRoleHandler(IUserRepository userRepository, IUserRoleRepository roleRepository, IValidator<AssignUserRoleCommand> validator)
+        private IMapper mapper;
+        public AssignUserRoleHandler(IUserRepository userRepository, IUserRoleRepository roleRepository, IMapper mapper)
         {
             this.userRepository = userRepository;
             this.roleRepository = roleRepository;
-            this.validator = validator;
+            this.mapper = mapper;
         }
         public async Task<GetOperationResult<UserDTO>> Handle(AssignUserRoleCommand request, CancellationToken cancellationToken)
         {
@@ -38,12 +39,14 @@ namespace Helm.Core.Application.Users.Commands
             {
                 return new GetOperationResult<UserDTO>.Conflict();
             }
-            UserRole? userRole = await roleRepository.FindByIdAsync(request.RoleId, cancellationToken);
+            UserRole? userRole = await roleRepository.FindByIdAsync(request.RoleId);
             if (userRole == null)
             {
                 return new GetOperationResult<UserDTO>.Invalid();
             }
-            var dto = await userRepository.AssignUserRoleAsync(user, userRole, cancellationToken);
+            user.AddRole(userRole);
+            await userRepository.SaveChangesAsync(cancellationToken);
+            var dto = mapper.Map<UserDTO>(user);
             return new GetOperationResult<UserDTO>.Success(dto);   
 
         }

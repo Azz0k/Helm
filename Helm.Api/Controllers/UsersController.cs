@@ -43,13 +43,6 @@ namespace Helm.Api.Controllers
             var result = await sender.Send(command);
             return result.ToHttp(SuccessCodes.Ok);
         }
-        [HttpPut("{id}/password")]
-        public async Task<IActionResult> UpdateUserStatus(int id, [FromBody] UpdateUserPasswordCommand command)
-        {
-            command.Id = id;
-            var result = await sender.Send(command);
-            return result.ToHttp(SuccessCodes.Ok);
-        }
         [HttpPut("role")]
         public async Task<IActionResult> ReplaceRoleToUser([FromBody] ReplaceUserRoleCommand command)
         {

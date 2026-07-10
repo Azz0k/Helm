@@ -9,6 +9,7 @@ using MediatR;
 
 namespace Helm.Core.Application.Equipment.EquipmentTemplate.Commands
 {
+    [RequireRole("EquipmentManager")]
     public record CreateEquipmentTemplateCommand : IRequest<GetOperationResult<EquipmentTemplateDTO>>
     {
         public required string Name { get; set; }
@@ -20,16 +21,13 @@ namespace Helm.Core.Application.Equipment.EquipmentTemplate.Commands
         private readonly IEquipmentTemplateRepository equipmentTemplateRepository;
         private readonly IUserRepository userRepository;
         private readonly IUserContext userContext;
-        private readonly IValidator<CreateEquipmentTemplateCommand> validator;
         public CreateEquipmentTemplateCommandHandler(IEquipmentTemplateRepository equipmentTemplateRepository,
             IUserRepository userRepository,
-            IUserContext userContex,
-            IValidator<CreateEquipmentTemplateCommand> validator)
+            IUserContext userContex)
         {
             this.equipmentTemplateRepository = equipmentTemplateRepository;
             this.userRepository = userRepository;
             this.userContext = userContex;
-            this.validator = validator;
         }
         public async Task<GetOperationResult<EquipmentTemplateDTO>> Handle(CreateEquipmentTemplateCommand request, CancellationToken cancellationToken)
         {

@@ -28,7 +28,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Helm.Core\Helm.Core.csproj" />
-    <ProjectReference Include="..\Helm.Razor\Helm.Razor.csproj" />
   </ItemGroup>
 
   <ItemGroup>

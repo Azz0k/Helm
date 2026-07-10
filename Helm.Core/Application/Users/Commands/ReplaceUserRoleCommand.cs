@@ -1,12 +1,9 @@
-﻿using FluentValidation;
+﻿using AutoMapper;
 using Helm.Core.Application.Common;
 using Helm.Core.Application.Interfaces;
 using Helm.Core.Application.Users.Queries;
 using Helm.Core.Domain.Entities;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Helm.Core.Application.Users.Commands
 {
@@ -19,13 +16,14 @@ namespace Helm.Core.Application.Users.Commands
     public class ReplaceUserRoleHandler : IRequestHandler<ReplaceUserRoleCommand, GetOperationResult<UserDTO>>
     {
         private IUserRepository userRepository;
-        private IValidator<ReplaceUserRoleCommand> validator;
-        public ReplaceUserRoleHandler(IUserRepository userRepository, IValidator<ReplaceUserRoleCommand> validator)
+        private IUserRoleRepository userRoleRepository;
+        private IMapper mapper;
+        public ReplaceUserRoleHandler(IUserRepository userRepository, IUserRoleRepository userRoleRepository, IMapper mapper)
         {
             this.userRepository = userRepository;
-            this.validator = validator;
+            this.userRoleRepository = userRoleRepository;
+            this.mapper = mapper;
         }
-
         public async Task<GetOperationResult<UserDTO>> Handle(ReplaceUserRoleCommand request, CancellationToken cancellationToken)
         {
             User? user = await userRepository.FindUserByIdAysnc(request.UserId, cancellationToken);
@@ -33,7 +31,17 @@ namespace Helm.Core.Application.Users.Commands
             {
                 return new GetOperationResult<UserDTO>.NotFound();
             }
-            var dto = await userRepository.ReplaceUserRoleAsync(user, request.Roles, cancellationToken);
+            user.ClearRoles();
+            foreach (var roleId in request.Roles)
+            {
+                UserRole? userRole = await userRoleRepository.FindByIdAsync(roleId);
+                if (userRole != null)
+                {
+                    user.AddRole(userRole);
+                }
+            }
+            await userRepository.SaveChangesAsync(cancellationToken);
+            UserDTO dto = mapper.Map<UserDTO>(user);
             return new GetOperationResult<UserDTO>.Success(dto);
         }
     }

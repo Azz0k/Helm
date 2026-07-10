@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using AutoMapper;
+using FluentValidation;
 using Helm.Core.Application.Common;
 using Helm.Core.Application.Interfaces;
 using Helm.Core.Application.UserRoles.Commands;
@@ -18,21 +19,17 @@ namespace Helm.Core.Application.Users.Commands
     {
         public required string Login { get; set; }
         public required string Name { get; set; }
-        public string? Password { get; set; }
-        public string? ADLogin { get; set; }
-        public bool Enabled { get; set; }
-        public List<int> Roles { get; set; } = [];
     }
     public class CreateUserHandler : IRequestHandler<CreateUserCommand, GetOperationResult<UserDTO>>
     {
         private IUserRepository userRepository;
         private IUserRoleRepository userRoleRepository;
-        private readonly IValidator<CreateUserCommand> validator;
-        public CreateUserHandler(IUserRepository userRepository, IUserRoleRepository userRoleRepository, IValidator<CreateUserCommand> validator)
+        private IMapper mapper;
+        public CreateUserHandler(IUserRepository userRepository, IUserRoleRepository userRoleRepository, IMapper mapper)  
         {
             this.userRepository = userRepository;
             this.userRoleRepository = userRoleRepository;
-            this.validator = validator;
+            this.mapper = mapper;
         }
 
         public async Task<GetOperationResult<UserDTO>> Handle(CreateUserCommand command, CancellationToken cancellationToken)
@@ -43,21 +40,10 @@ namespace Helm.Core.Application.Users.Commands
             {
                 return new GetOperationResult<UserDTO>.Conflict();
             }
-            User newUser = new() { Login =  command.Login, Name = command.Name, ADLogin = command.ADLogin, Enabled = command.Enabled};
-            if (command.Password != null)
-            {
-                newUser.Hash = BCrypt.Net.BCrypt.HashPassword(command.Password);
-            }
-            foreach (var roleId in command.Roles)
-            {
-                UserRole? role = await userRoleRepository.FindByIdAsync(roleId, cancellationToken);
-                if (role == null)
-                {
-                    return new GetOperationResult<UserDTO>.Invalid();
-                }
-                newUser.Roles.Add(role);
-            }
-            UserDTO dto = await userRepository.AddUserAsync(newUser, cancellationToken);
+            User newUser = new(command.Login, command.Name);
+            await userRepository.AddUserAsync(newUser);
+            await userRepository.SaveChangesAsync(cancellationToken);
+            UserDTO dto = mapper.Map<UserDTO>(newUser);
             return new GetOperationResult<UserDTO>.Success(dto);
         }
     }

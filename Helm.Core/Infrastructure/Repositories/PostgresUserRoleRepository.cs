@@ -30,40 +30,25 @@ namespace Helm.Core.Infrastructure.Repositories
                 .ProjectTo<UserRoleDTO>(mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
         }
-        public async Task<UserRoleDTO> AddRoleAsync(UserRole role, CancellationToken cancellationToken)
+        public async Task AddRoleAsync(UserRole role)
         {
             await dBContext.UserRoles.AddAsync(role);
+        }
+        public async Task SaveChangesAsync(CancellationToken cancellationToken)
+        {
             await dBContext.SaveChangesAsync(cancellationToken);
-            return mapper.Map<UserRoleDTO>(role);
         }
-        public async Task<UserRoleDTO?> UpdateRoleAsync(UserRole role, CancellationToken cancellationToken)
+        public async Task<UserRole?> FindByNameAsync(string name, CancellationToken cancellationToken)
         {
-            var currentRole = await dBContext.UserRoles.FindAsync(role.Id,cancellationToken);
-            if (currentRole == null)
-            {
-                return null;
-            }
-            currentRole.Description = role.Description;
-            currentRole.Name = role.Name;
-            await dBContext.SaveChangesAsync(cancellationToken);
-            return mapper.Map<UserRoleDTO>(role);
+            return await dBContext.UserRoles.FirstOrDefaultAsync(role=>role.Name==name, cancellationToken);
         }
-        public async Task<Boolean> FindByNameAsync(string name, CancellationToken cancellationToken)
+        public async Task<UserRole?> FindByIdAsync(int Id)
         {
-            UserRole? existingRole = await dBContext.UserRoles.FirstOrDefaultAsync(role=>role.Name==name, cancellationToken);
-            if (existingRole == null)
-            {
-                return false;
-            }
-            return true;
-        }
-        public async Task<UserRole?> FindByIdAsync(int Id, CancellationToken cancellationToken)
-        {
-            return await dBContext.UserRoles.FindAsync(Id, cancellationToken);
+            return await dBContext.UserRoles.FindAsync(Id);
         }
         public async Task<Boolean> DeleteByIdAsync(int Id, CancellationToken cancellationToken)
         {
-            UserRole? existingRole = await dBContext.UserRoles.FindAsync(Id, cancellationToken);
+            UserRole? existingRole = await dBContext.UserRoles.FindAsync(Id);
             if (existingRole == null)
             {
                 return false;

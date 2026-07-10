@@ -14,7 +14,6 @@ namespace Helm.Core.Application.Users.Queries
         public int Id { get; set; }
         public required string Login { get; set; }
         public required string Name { get; set; }
-        public string? ADLogin { get; set; }
         public bool Enabled { get; set; }
         public required List<int> Roles { get; set; }
         public class Mapping : Profile

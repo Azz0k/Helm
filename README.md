@@ -176,7 +176,7 @@ GET    /api/v1/users
 POST   /api/v1/users
 PUT    /api/v1/users
 PUT    /api/v1/users/{id}/status
-PUT    /api/v1/users/{id}/password
+put    /api/v1/users/role
 PUT    /api/v1/users/{userId}/role/{roleId}
 DELETE /api/v1/users/{userId}/role/{roleId}
 DELETE /api/v1/users/{id}

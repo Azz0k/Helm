@@ -20,18 +20,15 @@ namespace Helm.Core.Application.Equipment.Equipment.Commands
         private readonly IEquipmentRepository equipmentRepository;
         private readonly IUserRepository userRepository;
         private readonly IUserContext userContext;
-        private readonly IValidator<RenameEquipmentCommand> validator;
         private readonly IMapper mapper;
         public RenameEquipmentCommandHandler(IEquipmentRepository equipmentRepository, 
             IUserRepository userRepository, 
             IUserContext userContext, 
-            IValidator<RenameEquipmentCommand> validator,
             IMapper mapper)
         {
             this.equipmentRepository = equipmentRepository;
             this.userRepository = userRepository;
             this.userContext = userContext;
-            this.validator = validator;
             this.mapper = mapper;
         }
 
@@ -50,6 +47,14 @@ namespace Helm.Core.Application.Equipment.Equipment.Commands
             if (equipment == null)
             {
                 return new GetOperationResult<EquipmentDTO>.NotFound();
+            }
+            if (equipment.Name != request.Name)
+            {
+                Helm.Core.Domain.Entities.Equipment? targetEquipment = await equipmentRepository.FindEquipmentByNameAsync(request.Name, cancellationToken);
+                if (targetEquipment !=null)
+                {
+                    return new GetOperationResult<EquipmentDTO>.Conflict();
+                }
             }
             equipment.Rename(user, request.Name);
             await equipmentRepository.SaveAsync(cancellationToken);
