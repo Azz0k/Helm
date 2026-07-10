@@ -1,6 +1,6 @@
-﻿using Helm.Core.Application.Common;
-using Helm.Core.Application.Equipment.Equipment.Commands;
-using Helm.Core.Application.Equipment.Equipment.Queries;
+﻿using Helm.Application.Common;
+using Helm.Application.Equipment.Equipment.Commands;
+using Helm.Application.Equipment.Equipment.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

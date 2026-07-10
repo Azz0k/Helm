@@ -1,4 +1,5 @@
-﻿using Helm.Core.Application.UserRoles.Commands;
+﻿using Helm.Application.UserRoles.Commands;
+using Helm.Application.UserRoles.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -6,7 +7,7 @@ using System.Runtime.Remoting;
 using System.Text;
 using System.Xml.Linq;
 using Xunit;
-using static Helm.Core.Application.UserRoles.Commands.UpdateUserRole;
+using static Helm.Application.UserRoles.Commands.UpdateUserRole;
 
 namespace Helm.Tests.ValidatorTests
 {

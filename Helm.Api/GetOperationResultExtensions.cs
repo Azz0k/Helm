@@ -1,4 +1,4 @@
-﻿using Helm.Core.Application.Common;
+﻿using Helm.Application.Common;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Helm.Api

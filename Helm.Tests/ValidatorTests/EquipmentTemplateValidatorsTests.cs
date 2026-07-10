@@ -1,5 +1,4 @@
-﻿using Helm.Core.Application.Equipment.Equipment.Commands;
-using Helm.Core.Application.Equipment.EquipmentTemplate.Commands;
+﻿using Helm.Application.Equipment.Equipment.Commands;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,6 +6,7 @@ using Xunit;
 using FluentValidation;
 using FluentValidation.TestHelper;
 using Helm.Domain.Constants;
+using Helm.Application.Equipment.EquipmentTemplate.Commands;
 
 
 namespace Helm.Tests.ValidatorTests

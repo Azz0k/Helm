@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Helm.Application\Helm.Application.csproj" />
     <ProjectReference Include="..\Helm.Core\Helm.Core.csproj" />
   </ItemGroup>
 

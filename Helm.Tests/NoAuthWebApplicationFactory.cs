@@ -1,6 +1,6 @@
-﻿using Helm.Core.Application.Common.Behaviours;
-using Helm.Core.Application.Interfaces;
-using Helm.Core.Application.Users.Queries;
+﻿using Helm.Application.Common.Behaviours;
+using Helm.Application.Interfaces;
+using Helm.Application.Users.Queries;
 using Helm.Core.Infrastructure.Configuration;
 using Helm.Core.Infrastructure.Contexts;
 using MediatR;

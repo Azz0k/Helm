@@ -1,6 +1,6 @@
 ﻿using Helm.Core.Infrastructure.Renderer;
 using Microsoft.AspNetCore.Mvc;
-using Helm.Core.Application.Equipment.EquipmentReceipt;
+using Helm.Application.Equipment.EquipmentReceipt;
 
 namespace Helm.Api.Controllers
 {

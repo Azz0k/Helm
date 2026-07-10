@@ -1,11 +1,11 @@
 ﻿
-using Helm.Core.Application.Common;
-using Helm.Core.Application.UserRoles.Commands;
-using Helm.Core.Application.UserRoles.Queries;
+using Helm.Application.Common;
+using Helm.Application.UserRoles.Commands;
+using Helm.Application.UserRoles.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using static Helm.Core.Application.UserRoles.Commands.UpdateUserRole;
+using static Helm.Application.UserRoles.Commands.UpdateUserRole;
 
 namespace Helm.Api.Controllers
 {

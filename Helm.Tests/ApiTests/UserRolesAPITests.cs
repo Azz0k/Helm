@@ -1,6 +1,6 @@
 ﻿using Helm.Api;
-using Helm.Core.Application.UserRoles.Queries;
-using Helm.Core.Application.Users.Queries;
+using Helm.Application.UserRoles.Queries;
+using Helm.Application.Users.Queries;
 using Helm.Core.Infrastructure.Contexts;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;

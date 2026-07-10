@@ -1,7 +1,7 @@
 ﻿
-using Helm.Core.Application.Common;
-using Helm.Core.Application.Users.Commands;
-using Helm.Core.Application.Users.Queries;
+using Helm.Application.Common;
+using Helm.Application.Users.Commands;
+using Helm.Application.Users.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

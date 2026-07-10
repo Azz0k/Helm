@@ -1,0 +1,56 @@
+﻿using AutoMapper;
+using FluentValidation;
+using Helm.Application.Common;
+using Helm.Application.Equipment.Equipment.Queries;
+using Helm.Application.Interfaces;
+using Helm.Domain.Entities;
+using MediatR;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Helm.Application.Equipment.Equipment.Commands
+{
+    [RequireRole("EquipmentManager")]
+    public record IssueEquipmentCommand : IRequest<GetOperationResult<EquipmentDTO>>
+    {
+        public required int Id { get; set; }
+        public required string IssuedBy { get; set; }
+    }
+    public class IssueEquipmentCommandHandler : IRequestHandler<IssueEquipmentCommand, GetOperationResult<EquipmentDTO>>
+    {
+        private readonly IEquipmentRepository equipmentRepository;
+        private readonly IUserRepository userRepository;
+        private readonly IUserContext userContext;
+        private readonly IMapper mapper;
+        public IssueEquipmentCommandHandler(IEquipmentRepository equipmentRepository, IUserRepository userRepository, IUserContext userContext, IMapper mapper)
+        {
+            this.equipmentRepository = equipmentRepository;
+            this.userRepository = userRepository;
+            this.userContext = userContext;
+            this.mapper = mapper;
+        }
+
+        public async Task<GetOperationResult<EquipmentDTO>> Handle(IssueEquipmentCommand request, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrEmpty(userContext.Login))
+            {
+                return new GetOperationResult<EquipmentDTO>.Unexpected();
+            }
+            User? user = await userRepository.FindUserByLoginAsync(userContext.Login.ToLower(), cancellationToken);
+            if (user == null)
+            {
+                return new GetOperationResult<EquipmentDTO>.Unexpected();
+            }
+            Domain.Entities.Equipment? equipment = await equipmentRepository.FindEquipmentByIdAsync(request.Id, cancellationToken);
+            if (equipment == null)
+            {
+                return new GetOperationResult<EquipmentDTO>.NotFound();
+            }
+            equipment.Issue(user, request.IssuedBy);
+            await equipmentRepository.SaveAsync(cancellationToken);
+            EquipmentDTO equipmentDto = mapper.Map<EquipmentDTO>(equipment);
+            return new GetOperationResult<EquipmentDTO>.Success(equipmentDto);
+        }
+    }
+}

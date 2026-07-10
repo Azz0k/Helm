@@ -1,4 +1,4 @@
-﻿using Helm.Core.Application.Common.Exceptions;
+﻿using Helm.Application.Common.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Helm.Api

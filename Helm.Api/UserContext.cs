@@ -1,4 +1,4 @@
-﻿using Helm.Core.Application.Interfaces;
+﻿using Helm.Application.Interfaces;
 
 namespace Helm.Api
 {

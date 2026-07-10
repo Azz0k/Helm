@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using Helm.Core.Application.Common;
-using Helm.Core.Application.Interfaces;
-using Helm.Core.Application.UserRoles.Queries;
+using Helm.Application.Common;
+using Helm.Application.Interfaces;
+using Helm.Application.UserRoles.Queries;
 using Helm.Core.Infrastructure.Contexts;
 using Helm.Domain.Entities;
 using Microsoft.EntityFrameworkCore;

@@ -1,7 +1,7 @@
 ﻿using Helm.Api;
-using Helm.Core.Application.Equipment.EquipmentTemplate.Commands;
-using Helm.Core.Application.Equipment.EquipmentTemplate.Queries;
-using Helm.Core.Application.Users.Commands;
+using Helm.Application.Equipment.EquipmentTemplate.Commands;
+using Helm.Application.Equipment.EquipmentTemplate.Queries;
+using Helm.Application.Users.Commands;
 using Helm.Core.Infrastructure.Contexts;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;

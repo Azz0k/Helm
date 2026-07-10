@@ -1,0 +1,65 @@
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using FluentValidation;
+using Helm.Application.Common;
+using Helm.Application.Equipment.Equipment.Queries;
+using Helm.Application.Interfaces;
+using Helm.Domain.Entities;
+using MediatR;
+
+namespace Helm.Application.Equipment.Equipment.Commands
+{
+    [RequireRole("EquipmentManager")]
+    public record RenameEquipmentCommand :IRequest<GetOperationResult<EquipmentDTO>>
+    {
+        public required int Id { get; set; }
+        public required string Name { get; set; }
+    }
+    public class RenameEquipmentCommandHandler : IRequestHandler<RenameEquipmentCommand, GetOperationResult<EquipmentDTO>>
+    {
+        private readonly IEquipmentRepository equipmentRepository;
+        private readonly IUserRepository userRepository;
+        private readonly IUserContext userContext;
+        private readonly IMapper mapper;
+        public RenameEquipmentCommandHandler(IEquipmentRepository equipmentRepository, 
+            IUserRepository userRepository, 
+            IUserContext userContext, 
+            IMapper mapper)
+        {
+            this.equipmentRepository = equipmentRepository;
+            this.userRepository = userRepository;
+            this.userContext = userContext;
+            this.mapper = mapper;
+        }
+
+        public async Task<GetOperationResult<EquipmentDTO>> Handle(RenameEquipmentCommand request, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrEmpty(userContext.Login))
+            {
+                return new GetOperationResult<EquipmentDTO>.Unexpected();
+            }
+            User? user = await userRepository.FindUserByLoginAsync(userContext.Login.ToLower(), cancellationToken);
+            if (user == null)
+            {
+                return new GetOperationResult<EquipmentDTO>.Unexpected();
+            }
+            Domain.Entities.Equipment? equipment = await equipmentRepository.FindEquipmentByIdAsync(request.Id, cancellationToken);
+            if (equipment == null)
+            {
+                return new GetOperationResult<EquipmentDTO>.NotFound();
+            }
+            if (equipment.Name != request.Name)
+            {
+                Domain.Entities.Equipment? targetEquipment = await equipmentRepository.FindEquipmentByNameAsync(request.Name, cancellationToken);
+                if (targetEquipment !=null)
+                {
+                    return new GetOperationResult<EquipmentDTO>.Conflict();
+                }
+            }
+            equipment.Rename(user, request.Name);
+            await equipmentRepository.SaveAsync(cancellationToken);
+            EquipmentDTO equipmentDto =  mapper.Map<EquipmentDTO>(equipment);
+            return new GetOperationResult<EquipmentDTO>.Success(equipmentDto);
+        }
+    }
+}

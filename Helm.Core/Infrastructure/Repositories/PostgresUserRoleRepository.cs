@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using Helm.Core.Application.Interfaces;
-using Helm.Core.Application.UserRoles.Queries;
-using Helm.Core.Application.Users.Queries;
+using Helm.Application.Interfaces;
+using Helm.Application.UserRoles.Queries;
+using Helm.Application.Users.Queries;
 using Helm.Core.Infrastructure.Contexts;
 using Helm.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
