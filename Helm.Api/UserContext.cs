@@ -1,4 +1,5 @@
 ﻿using Helm.Application.Interfaces;
+using System.Security.Claims;
 
 namespace Helm.Api
 {
@@ -9,6 +10,6 @@ namespace Helm.Api
             httpContextAccessor
             .HttpContext?
             .User
-            .Claims.FirstOrDefault(c=>c.Type.Contains("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"))?.Value;
+            .Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
     }
 }
