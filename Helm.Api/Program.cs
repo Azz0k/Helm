@@ -1,5 +1,5 @@
 using Helm.Application.Interfaces;
-using Helm.Core.Infrastructure.Configuration;
+using Helm.Infrastructure.Configuration;
 using System.Runtime.CompilerServices;
 
 

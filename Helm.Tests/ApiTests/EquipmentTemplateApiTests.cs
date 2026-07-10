@@ -2,7 +2,7 @@
 using Helm.Application.Equipment.EquipmentTemplate.Commands;
 using Helm.Application.Equipment.EquipmentTemplate.Queries;
 using Helm.Application.Users.Commands;
-using Helm.Core.Infrastructure.Contexts;
+using Helm.Infrastructure.Contexts;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Testing;

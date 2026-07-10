@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Helm.Core.Infrastructure.Configuration
+namespace Helm.Infrastructure.Configuration
 {
     public class ADFSSettings
     {

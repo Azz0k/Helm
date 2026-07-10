@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Net.Http.Headers;
 using System.Text;
 
-namespace Helm.Core.Infrastructure.Configuration
+namespace Helm.Infrastructure.Configuration
 {
 
     public class AppSettingsValidator

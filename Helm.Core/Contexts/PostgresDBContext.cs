@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Helm.Core.Infrastructure.Contexts
+namespace Helm.Infrastructure.Contexts
 {
     public class DateTimeOffsetConverter : ValueConverter<DateTimeOffset, DateTimeOffset>
     {

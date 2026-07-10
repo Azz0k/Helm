@@ -37,7 +37,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Helm.Api\Helm.Api.csproj" />
     <ProjectReference Include="..\Helm.Application\Helm.Application.csproj" />
-    <ProjectReference Include="..\Helm.Core\Helm.Core.csproj" />
+    <ProjectReference Include="..\Helm.Core\Helm.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

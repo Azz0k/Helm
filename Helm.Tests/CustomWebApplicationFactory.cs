@@ -1,9 +1,4 @@
-﻿using Helm.Application.Common.Behaviours;
-using Helm.Application.Interfaces;
-using Helm.Application.Users.Queries;
-using Helm.Core.Infrastructure.Configuration;
-using Helm.Core.Infrastructure.Contexts;
-using MediatR;
+﻿using Helm.Infrastructure.Contexts;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;

@@ -2,12 +2,12 @@
 using AutoMapper.QueryableExtensions;
 using Helm.Application.Equipment.Equipment.Queries;
 using Helm.Application.Interfaces;
-using Helm.Core.Infrastructure.Contexts;
 using Helm.Domain.Entities;
+using Helm.Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
 
 
-namespace Helm.Core.Infrastructure.Repositories
+namespace Helm.Infrastructure.Repositories
 {
     public class PostgresEquipmentRepository : IEquipmentRepository
     {

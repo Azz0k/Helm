@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
-namespace Helm.Core.Infrastructure.Renderer;
+namespace Helm.Infrastructure.Renderer;
 
 public interface IHtmlRenderer
 {

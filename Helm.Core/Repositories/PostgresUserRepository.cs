@@ -3,15 +3,15 @@ using AutoMapper.QueryableExtensions;
 using Helm.Application.Interfaces;
 using Helm.Application.UserRoles.Queries;
 using Helm.Application.Users.Queries;
-using Helm.Core.Infrastructure.Contexts;
 using Helm.Domain.Entities;
+using Helm.Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
 
-namespace Helm.Core.Infrastructure.Repositories
+namespace Helm.Infrastructure.Repositories
 {
     public class PostgresUserRepository : IUserRepository
     {

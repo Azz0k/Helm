@@ -2,9 +2,10 @@
 using Helm.Application.Common.Behaviours;
 using Helm.Application.Interfaces;
 using Helm.Application.Users.Queries;
-using Helm.Core.Infrastructure.Configuration;
-using Helm.Core.Infrastructure.Contexts;
-using Helm.Core.Infrastructure.Repositories;
+using Helm.Infrastructure.Configuration;
+using Helm.Infrastructure.Contexts;
+using Helm.Infrastructure.Renderer;
+using Helm.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Protocols;
@@ -55,7 +56,7 @@ namespace Helm.Api
                 cfg.AddMaps(new[]
                 {
                     "Helm.API",
-                    "Helm.Core",
+                    "Helm.Infrastructure",
                     "Helm.Domain",
                     "Helm.Application"
                 });
@@ -75,7 +76,7 @@ namespace Helm.Api
         }
         public static void AddInfrastructure(this IServiceCollection services, AppSettings appSettings)
         {
-            services.AddTransient<Helm.Core.Infrastructure.Renderer.IHtmlRenderer, Helm.Core.Infrastructure.Renderer.HtmlRenderer>();
+            services.AddTransient<IHtmlRenderer, HtmlRenderer>();
             services.AddDbContext<PostgresDBContext>(options => options.UseNpgsql(appSettings.ConnectionString));
             services.AddScoped<IUserRepository, PostgresUserRepository>();
             services.AddScoped<IUserRoleRepository, PostgresUserRoleRepository>();

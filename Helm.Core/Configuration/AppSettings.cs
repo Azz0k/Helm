@@ -1,11 +1,6 @@
-﻿using MediatR.NotificationPublishers;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.Extensions.Configuration;
 
-namespace Helm.Core.Infrastructure.Configuration
+namespace Helm.Infrastructure.Configuration
 {
     public class AppSettings
     {
