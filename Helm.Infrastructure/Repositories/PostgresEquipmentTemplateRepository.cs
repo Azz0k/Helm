@@ -40,7 +40,6 @@ namespace Helm.Infrastructure.Repositories
         public async Task<List<EquipmentTemplateDTO>> GetAllEquipmentTemplatesAsync(CancellationToken cancellationToken)
         {
             return await dBContext.EquipmentTemplates
-                .Where(e=>!e.Deleted)
                 .AsNoTracking()
                 .ProjectTo<EquipmentTemplateDTO>(mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);

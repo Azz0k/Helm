@@ -15,6 +15,7 @@ namespace Helm.Tests.ValidatorTests
     {
         private readonly CreateEquipmentTemplateCommandValidator createEquipmentTemplateCommandValidator = new();
         private readonly UpdateEquipmentTemplateCommandValidator updateEquipmentTemplateCommandValidator = new();
+        private readonly DeleteEquipmentTemplateCommandValidator deleteEquipmentTemplateCommandValidator = new();
         private CreateEquipmentTemplateCommand GenerateValidCreateEquipmentTemplateCommand()
         {
             return new CreateEquipmentTemplateCommand()
@@ -32,6 +33,13 @@ namespace Helm.Tests.ValidatorTests
                 Name = new string('a', EquipmentTemplateConstants.NameMaxLength),
                 Description = new string('a', EquipmentTemplateConstants.DesciptionMaxLength),
                 Enabled = true,
+            };
+        }
+        private DeleteEquipmentTemplateCommand GenerateValidDeleteEquipmentTemplateCommand()
+        {
+            return new DeleteEquipmentTemplateCommand()
+            {
+                Id = 1
             };
         }
         [Theory]
@@ -118,6 +126,26 @@ namespace Helm.Tests.ValidatorTests
             command.Description = description;
             var result = updateEquipmentTemplateCommandValidator.TestValidate(command);
             result.ShouldHaveValidationErrorFor(x => x.Description);
+        }
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        public void IdMustBeInvalid_UpdateEquipmentTemplateCommand(int id)
+        {
+            var command = GenerateValidUpdateEquipmentTemplateCommand();
+            command.Id = id;
+            var result = updateEquipmentTemplateCommandValidator.TestValidate(command);
+            result.ShouldHaveValidationErrorFor(x => x.Id);
+        }
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        public void IdMustBeInvalid_DeleteEquipmentTemplateCommand(int id)
+        {
+            var command = GenerateValidDeleteEquipmentTemplateCommand();
+            command.Id = id;
+            var result = deleteEquipmentTemplateCommandValidator.TestValidate(command);
+            result.ShouldHaveValidationErrorFor(x => x.Id);
         }
     }
 }

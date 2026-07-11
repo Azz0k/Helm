@@ -36,5 +36,11 @@ namespace Helm.Api.Controllers
             var result = await sender.Send(command, cancellationToken);
             return result.ToHttp(SuccessCodes.Ok);
         }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteEquipmentTemplate(int id, CancellationToken cancellationToken)
+        {
+            var result = await sender.Send(new DeleteEquipmentTemplateCommand() { Id = id}, cancellationToken);
+            return result.ToHttp(SuccessCodes.NoContent);
+        }
     }
 }

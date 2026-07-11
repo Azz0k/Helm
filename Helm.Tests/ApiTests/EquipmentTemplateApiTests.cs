@@ -75,13 +75,19 @@ namespace Helm.Tests.ApiTests
             var response = await _client.PutAsJsonAsync(apiUri, request);
             return response;
         }
+        private async Task<HttpResponseMessage?> DeleteAsync(int id)
+        {
+            DeleteEquipmentTemplateCommand request = new() { Id = id };
+            var response = await _client.DeleteAsync($"{apiUri}/{id}");
+            return response;
+        }
         [Fact]
         public async Task EquipmentTemplateApi_GET_HappyPath()
         {
             List<EquipmentTemplateDTO>? getResponse = await GetAsync();
             Assert.NotNull(getResponse);
         }
-        
+
         [Fact]
         public async Task EquipmentTemplateApi_POST_HappyPath()
         {
@@ -159,6 +165,31 @@ namespace Helm.Tests.ApiTests
             response = await UpdateAsync(id, name, name, false);
             Assert.NotNull(response);
             Assert.Equal(409, (int)response.StatusCode);
+        }
+        [Fact]
+        public async Task EquipmentTemplateApi_Delete_HappyPath()
+        {
+            string name = Guid.NewGuid().ToString();
+            var response = await CreateAsync(name, name, name);
+            Assert.NotNull(response);
+            Assert.Equal(201, (int)response.StatusCode);
+            var content = await response.Content.ReadFromJsonAsync<EquipmentTemplateDTO>(TestContext.Current.CancellationToken);
+            Assert.NotNull(content);
+            int id = content.Id;
+            response = await DeleteAsync(id);
+            Assert.NotNull(response);
+            Assert.Equal(204, (int)response.StatusCode);
+            var list = await GetAsync();
+            Assert.NotNull(list);
+            Assert.NotEmpty(list);
+            Assert.DoesNotContain(list, e => e.Id == id);
+        }
+        [Fact]
+        public async Task EquipmentTemplateApi_Delete_MaxIntId_Should_NotFound()
+        {
+            var response = await DeleteAsync(int.MaxValue);
+            Assert.NotNull(response);
+            Assert.Equal(404, (int)response.StatusCode);
         }
     }
 }

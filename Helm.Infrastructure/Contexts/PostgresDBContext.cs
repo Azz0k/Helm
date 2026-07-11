@@ -43,7 +43,7 @@ namespace Helm.Infrastructure.Contexts
                 entity.Property(entity => entity.Enabled).IsRequired().HasDefaultValue(true);
                 entity.Property(entity => entity.Deleted).IsRequired().HasDefaultValue(false);
                 entity.HasMany(entity => entity.Roles).WithMany(r => r.Users);
-                entity.HasQueryFilter(u => !u.Deleted);
+                entity.HasQueryFilter(entity => !entity.Deleted);
             });
             modelBuilder.Entity<UserRole>(entity =>
             {
@@ -63,6 +63,7 @@ namespace Helm.Infrastructure.Contexts
                 entity.ToTable("EquipmentTemplates");
                 entity.HasKey(entity => entity.Id);
                 entity.HasIndex(entity => entity.Name).IsUnique();
+                entity.HasQueryFilter(entity => !entity.Deleted);
             });
             modelBuilder.Entity<EquipmentReceipt>(entity =>
             {

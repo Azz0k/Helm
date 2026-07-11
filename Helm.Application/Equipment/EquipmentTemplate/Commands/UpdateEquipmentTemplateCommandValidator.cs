@@ -10,6 +10,8 @@ namespace Helm.Application.Equipment.EquipmentTemplate.Commands
     {
         public UpdateEquipmentTemplateCommandValidator()
         {
+            RuleFor(x => x.Id)
+                .Must(i => i > 0);
             RuleFor(x => x.Name)
                 .NotEmpty()
                 .MaximumLength(EquipmentTemplateConstants.NameMaxLength)
