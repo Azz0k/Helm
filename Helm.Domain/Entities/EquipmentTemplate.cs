@@ -24,6 +24,14 @@
         public EquipmentTemplate(){
 
         }
+        public void Update(User user, string? name, string? description, bool? enabled)
+        {
+            if (Deleted) return;
+            Name = name ?? Name;
+            Description = description ?? Description;
+            Enabled = enabled ?? Enabled;
+            SetModified(user);
+        }
         public void Delete(User user)
         {
             if (Deleted) return;

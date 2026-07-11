@@ -30,5 +30,11 @@ namespace Helm.Api.Controllers
             var result = await sender.Send(command, cancellationToken);
             return result.ToHttp(SuccessCodes.Created);
         }
+        [HttpPut]
+        public async Task<IActionResult> UpdateEquipmentTemplate([FromBody] UpdateEquipmentTemplateCommand command, CancellationToken cancellationToken)
+        {
+            var result = await sender.Send(command, cancellationToken);
+            return result.ToHttp(SuccessCodes.Ok);
+        }
     }
 }
