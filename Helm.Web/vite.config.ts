@@ -1,18 +1,17 @@
 import { defineConfig } from 'vite'
-import tailwindcss from "@tailwindcss/vite"
-import react from '@vitejs/plugin-react'
-import * as path from "node:path";
-import * as fs from "node:fs";
+import vue from '@vitejs/plugin-vue'
+import fs from "node:fs";
+import path from "node:path";
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [vue()],
   server:{
-      port:443,
-      https:{
-        pfx: fs.readFileSync(path.join(__dirname, 'cert_localhost.pfx')),
-        passphrase: 'sample',
-      }
+    port:443,
+    https:{
+      pfx: fs.readFileSync(path.join(__dirname, 'cert_localhost.pfx')),
+      passphrase: 'sample',
+    }
   },
   resolve: {
     alias: {
