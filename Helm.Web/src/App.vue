@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { onBeforeMount } from 'vue';
-import { useAuthStore } from "@/store/authStore.ts";
+import { useAuthStore } from "@/stores/auth.ts";
 import { useAuth } from "@/hooks/useAuth.ts";
+import { Button } from '@/components/ui/button'
 
 const authStore = useAuthStore();
 const {login, logout, handleRedirect } = useAuth();
@@ -22,7 +23,7 @@ onBeforeMount(async () =>{
     <div v-if="authStore.isAuthenticated">
       <div>
         Welcome, {{ authStore.user?.username }}!
-        <button @click="handleLogout">Logout</button>/
+        <Button variant="destructive" @click="handleLogout">Logout</Button>
       </div>
     </div>
     <div v-else>

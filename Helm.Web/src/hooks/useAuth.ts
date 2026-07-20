@@ -1,5 +1,5 @@
 import  { msalInstance } from '../config/msalConfig.ts';
-import {useAuthStore} from "@/store/authStore.ts";
+import {useAuthStore} from "@/stores/auth.ts";
 
 export function useAuth() {
   const authStore = useAuthStore();
