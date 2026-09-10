@@ -1,7 +1,8 @@
 import {defineStore} from 'pinia';
 import type {AccountInfo} from '@azure/msal-browser';
 
-export const useAuthStore = defineStore('auth',{
+export const useAuthStore = defineStore(
+  'auth',{
   state: ()=>({
     isRedirectDone: false,
     user: null as AccountInfo | null,
