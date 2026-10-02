@@ -1,13 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Welcome from '@/pages/welcome/welcome.vue';
 import nprogress from 'nprogress';
+import Users from "@/pages/users/users.vue";
 
 const routes = [
   { path: '/', component: Welcome },
   { path: '/dashboard', component: Welcome },
   { path: '/help-center', component: Welcome },
   { path: '/apps', component: Welcome },
-  { path: '/users', component: Welcome },
+  { path: '/users', component: Users },
 ]
 
 const router = createRouter({
