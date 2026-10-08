@@ -8,20 +8,22 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import DataTableLoading from './table-loading.vue';
 import DataTablePagination from './table-pagination.vue';
 import NoResultFound from "@/components/no-result-found.vue";
+import {toRefs} from "vue";
 
 const props = defineProps<{
   features: TableFeatures,
   columns: ColumnDef<TableFeatures, T>[],
   data: T[],
+  loading: boolean,
 }>();
-
-const loading = false;
+const {data} = toRefs(props);
+const {loading} = toRefs(props);
 const table = useTable(
     {
-      debugTable: true,
+//      debugTable: true,
       features: props.features,
       columns:props.columns,
-      data:props.data,
+      data,
     },
 )
 </script>

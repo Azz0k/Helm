@@ -32,15 +32,15 @@ const errorCallType: (FacetedFilterOption & {  style: string}) ={
 //const columnHelper = createColumnHelper<typeof features, User>();
 const columnHelper = createColumnHelper<TableFeatures, User>();
 export const columns = columnHelper.columns([
-  columnHelper.accessor("Login", {
+  columnHelper.accessor("login", {
     header: "Login",
     cell: (info)=>info.getValue(),
   }),
-  columnHelper.accessor("Name", {
+  columnHelper.accessor("name", {
     header: "Name",
     cell: (info)=>info.getValue(),
   }),
-  columnHelper.accessor("Enabled", {
+  columnHelper.accessor("enabled", {
     header: "Status",
     cell: (info)=>{
       const text = statuses.get(info.getValue());
@@ -48,7 +48,7 @@ export const columns = columnHelper.columns([
       return h(Badge, { class: `${callType.style || ""}`, variant: "outline" }, () => callType.label);
     },
   }),
-  columnHelper.accessor("Roles", {
+  columnHelper.accessor("roles", {
     header: "Roles",
     cell: (info)=>{
       return info.getValue().join(",");

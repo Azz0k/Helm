@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
 using Helm.Domain.Entities;
 
-
-
 namespace Helm.Application.Users.Queries
 {
-
     public class UserDTO
     {
         public int Id { get; set; }
@@ -22,5 +19,4 @@ namespace Helm.Application.Users.Queries
             }
         }
     }
-
 }

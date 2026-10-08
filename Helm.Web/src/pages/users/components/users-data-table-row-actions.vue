@@ -35,7 +35,9 @@ const props = defineProps<DataTableRowActionsProps>()
         <DropdownMenuItem >
           Edit
         </DropdownMenuItem>
-
+        <DropdownMenuItem>
+          Edit Roles
+        </DropdownMenuItem>
         <DropdownMenuItem>
           Delete
         </DropdownMenuItem>

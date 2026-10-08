@@ -49,6 +49,23 @@ export function useAuth() {
     finally {
       authStore.isRedirectDone = true;
     }
-  }
-  return {  login, logout, handleRedirect };
+  };
+  const getAccessToken = async () => {
+    const account =  msalInstance.getActiveAccount();
+    const accessTokenRequest = {
+      scopes: ["openid"],
+      account: account ?? undefined,
+    };
+    let token: string;
+    try {
+      const response = await msalInstance.acquireTokenSilent(accessTokenRequest);
+      token = response.accessToken;
+    }
+    catch {
+      const response = await msalInstance.acquireTokenSilent(accessTokenRequest);
+      token = response.accessToken;
+    }
+    return token;
+  };
+  return {  login, logout, handleRedirect, getAccessToken };
 }

@@ -3,8 +3,10 @@ import {ref} from "vue";
 import {Dialog, DialogContent, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import { UserRoundPlusIcon } from '@lucide/vue'
+import EditUserFields from "./edit-user-fields.vue";
 
 const isOpen = ref(false);
+const id = 0;
 </script>
 
 <template>
@@ -19,7 +21,11 @@ const isOpen = ref(false);
       <DialogTitle>
         Титле
       </DialogTitle>
-      Калтент
+      <EditUserFields
+          :id
+          login=""
+          name=""
+      />
     </DialogContent>
   </Dialog>
 </template>

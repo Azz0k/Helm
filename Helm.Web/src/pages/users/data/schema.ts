@@ -13,6 +13,7 @@ import {
   sortFn_text,
   tableFeatures
 } from "@tanstack/vue-table";
+import {z as zod} from "zod";
 
 export const features = tableFeatures({
   columnVisibilityFeature,
@@ -33,10 +34,15 @@ export const features = tableFeatures({
   },
 });
 
-export interface User {
-  Id:number
-  Login:string
-  Name:string
-  Enabled:boolean
-  Roles:string[]
-}
+
+export const UserSchema = zod.object({
+  id:zod.number(),
+  login:zod.string(),
+  name:zod.string(),
+  enabled:zod.boolean(),
+  roles:zod.array(zod.number()),
+});
+
+export type User = zod.infer<typeof UserSchema>;
+
+export const userListSchema = zod.array(UserSchema);

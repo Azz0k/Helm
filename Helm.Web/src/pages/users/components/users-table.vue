@@ -5,9 +5,8 @@ import  { columns} from "@/pages/users/components/columns.ts";
 
 const props = defineProps<{
   loading: boolean;
-  data: User[]
+  data: User[];
 }>();
-
 
 </script>
 

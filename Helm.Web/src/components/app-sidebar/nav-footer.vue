@@ -15,7 +15,6 @@ import {useAuthStore} from "@/stores/auth-store.ts";
 
 const {logout} = useAuth();
 const authStore = useAuthStore();
-console.log(authStore.user);
 const user: User = {
   name: authStore.user?.name,
   email: authStore.user?.username
